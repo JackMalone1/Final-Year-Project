@@ -1,5 +1,7 @@
+from os import system
 import pygame
 from pygame.constants import FULLSCREEN, RESIZABLE
+from board import Board
 
 def main():
     pygame.init()
@@ -10,17 +12,18 @@ def main():
     screen = pygame.display.set_mode((800,600), RESIZABLE)
 
     running = True
+    background = pygame.image.load("Assets//background.jpg")
+    board = Board(background=background, size=5)
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         screen.fill((255,255,255))
-        pygame.draw.rect(screen, (0,0,255),(200,150,100,50))
-        pygame.display.update()
+        board.render(screen)
+        pygame.display.flip()
     
     pygame.quit()
-    sys.exit()
 
 if __name__ == '__main__':
     main()
