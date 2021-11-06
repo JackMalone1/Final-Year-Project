@@ -9,11 +9,11 @@ def main():
     pygame.display.set_icon(logo)
     pygame.display.set_caption("test program")
 
-    screen = pygame.display.set_mode((800,600), RESIZABLE)
+    screen = pygame.display.set_mode((800,800), RESIZABLE)
 
     running = True
     background = pygame.image.load("Assets//background.jpg")
-    board = Board(background=background, size=5)
+    board = Board(background=background, size=19)
 
     while running:
         for event in pygame.event.get():
