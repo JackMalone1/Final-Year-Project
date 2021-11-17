@@ -27,6 +27,9 @@ def main():
             if height < 800:
                 height = 800
             screen = pygame.display.set_mode((width,height), RESIZABLE)
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            board.checkMousePosition(pygame.mouse.get_pos())
+
             
         screen.fill((255,255,255))
         board.render(screen)

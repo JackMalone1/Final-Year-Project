@@ -1,11 +1,19 @@
 from typing import Tuple
-from colours import Colour
 
+import pygame
+from colours import Colour
 class piece:
-    def __init__(self, position: Tuple(int, int)):
+    def __init__(self) -> None:
+        pass
+    def __init__(self, position: tuple()):
         self.position = position
         self.colour = Colour.CLEAR
+        self.radius = 15
         
-    def init(self, position: Tuple(int, int), colour: Colour):
+    def __init__(self, position: tuple(), colour: Colour):
         self.position = position
         self.colour = colour
+        self.radius = 15
+
+    def render(self, surface: pygame.Surface):
+        pygame.draw.circle(surface, self.colour.value, self.position, self.radius)
