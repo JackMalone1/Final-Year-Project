@@ -2,6 +2,7 @@ from typing import Tuple
 from piece import piece
 import pygame
 from colours import Colour
+from player_turn import player_turn
 
 class Board:
     def __init__(self, background: pygame.image, size: int):
@@ -23,12 +24,17 @@ class Board:
             for piece in row:
                 piece.render(screen)
 
-    def checkMousePosition(self, mouse_position):
+    def checkMousePosition(self, mouse_position, current_colour: player_turn) -> None:
         for x in range(self.size + 1):
             for y in range(self.size + 1):
                 if self.board_intersections[x][y].collidepoint(mouse_position):
                     print("Collision")
                     self.piece_matrix[x][y].position = self.board_intersections[x][y].center
+                    if current_colour == player_turn.BLACK:
+                        self.piece_matrix[x][y].colour = Colour.BLACK
+                    elif current_colour == player_turn.WHITE:
+                        self.piece_matrix[x][y].colour = Colour.WHITE
+                    break
 
 
     def set_up_grid(self):

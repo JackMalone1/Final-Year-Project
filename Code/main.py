@@ -3,6 +3,7 @@ import pygame
 from pygame.constants import FULLSCREEN, RESIZABLE
 from board import Board
 import pygame_gui
+from player_turn import player_turn
 
 def main():
     pygame.init()
@@ -16,9 +17,10 @@ def main():
     background = pygame.image.load("Assets//background.jpg")
     board = Board(background=background, size=19)
     manager = pygame_gui.UIManager((800, 800))
-    hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-                                             text='Say Hello',
-                                             manager=manager)
+    current_colour = player_turn.BLACK
+    # hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
+    #                                          text='Say Hello',
+    #                                          manager=manager)
     clock = pygame.time.Clock()
     while running:
         time_delta = clock.tick(60) / 1000.0
@@ -33,12 +35,16 @@ def main():
                     height = 800
                 screen = pygame.display.set_mode((width,height), RESIZABLE)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                board.checkMousePosition(pygame.mouse.get_pos())
+                board.checkMousePosition(pygame.mouse.get_pos(), current_colour)
+                if current_colour is player_turn.BLACK:
+                    current_colour = player_turn.WHITE
+                elif current_colour is player_turn.WHITE:
+                    current_colour = player_turn.BLACK
             
-            if event.type == pygame.USEREVENT:
-                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == hello_button:
-                        print("hello world")
+            # if event.type == pygame.USEREVENT:
+            #     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+            #         if event.ui_element == hello_button:
+            #             print("hello world")
             manager.process_events(event)
         manager.update(time_delta)
             
