@@ -1,6 +1,7 @@
 from typing import Tuple
 from piece import Piece
 import pygame
+from pygame import freetype
 from colours import Colour
 from player_turn import player_turn
 from string import ascii_uppercase
@@ -15,7 +16,7 @@ class Text:
 class Board:
     def __init__(self, background: pygame.image, size: int):
         self.size = size - 1
-        self.font = pygame.freetype.Font("MONOFONT.ttf", 24)
+        self.font = freetype.Font("MONOFONT.ttf", 24)
         self.numbers = ['' for i in range(self.size + 1)]
         self.letters = ['' for x in range(self.size + 1)]
         self.board = [[0 for x in range(self.size)] for y in range(self.size)]

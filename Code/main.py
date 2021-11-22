@@ -1,12 +1,14 @@
 from os import system
 import pygame
+
 from pygame.constants import FULLSCREEN, RESIZABLE
 from board import Board
-import pygame_gui
 from player_turn import player_turn
 
+import dearpygui.dearpygui as dpg
 
 def main():
+
     pygame.init()
     logo = pygame.image.load("logo32x32.png")
     pygame.display.set_icon(logo)
@@ -17,12 +19,11 @@ def main():
     running = True
     background = pygame.image.load("Assets//background.jpg")
     board = Board(background=background, size=19)
-    manager = pygame_gui.UIManager((800, 800))
+
     current_colour = player_turn.BLACK
-    # hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-    #                                          text='Say Hello',
-    #                                          manager=manager)
+
     clock = pygame.time.Clock()
+
     while running:
         time_delta = clock.tick(60) / 1000.0
         for event in pygame.event.get():
@@ -43,16 +44,10 @@ def main():
                     elif current_colour is player_turn.WHITE:
                         current_colour = player_turn.BLACK
 
-            # if event.type == pygame.USEREVENT:
-            #     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-            #         if event.ui_element == hello_button:
-            #             print("hello world")
-            manager.process_events(event)
-        manager.update(time_delta)
 
-        screen.fill((255, 255, 255))
+
+
         board.render(screen)
-        manager.draw_ui(screen)
         pygame.display.flip()
 
     pygame.quit()
