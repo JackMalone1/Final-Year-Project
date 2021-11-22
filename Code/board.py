@@ -55,7 +55,7 @@ class Board:
                     return True
         return False
 
-    def set_up_numbers(self):
+    def set_up_numbers(self) -> None:
         starting_position = (self.board_intersections[-1][-1].x, self.board_intersections[-1][-1].y)
         x = self.board[0][0].x
         y = starting_position[1] + 10
@@ -74,7 +74,7 @@ class Board:
             self.numbers[i] = Text(string=str(number), position=(x, y))
             number -= 1
 
-    def set_up_grid(self):
+    def set_up_grid(self) -> None:
         for y in range(self.size + 1):
             y_position = self.offset + (y * self.tile_size)
             for x in range(self.size + 1):
@@ -89,3 +89,6 @@ class Board:
                     intersection = pygame.Rect(x_position - 5, y_position - 5, 10, 10)
                     self.board_intersections[x][y] = intersection
         self.set_up_numbers()
+
+    def get_piece_at_position(self, row: int, col: int) -> Piece:
+        return self.piece_matrix[row][col]

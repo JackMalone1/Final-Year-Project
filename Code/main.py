@@ -7,8 +7,8 @@ from player_turn import player_turn
 
 import dearpygui.dearpygui as dpg
 
-def main():
 
+def main():
     pygame.init()
     logo = pygame.image.load("logo32x32.png")
     pygame.display.set_icon(logo)
@@ -43,9 +43,6 @@ def main():
                         current_colour = player_turn.WHITE
                     elif current_colour is player_turn.WHITE:
                         current_colour = player_turn.BLACK
-
-
-
 
         board.render(screen)
         pygame.display.flip()
