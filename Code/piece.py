@@ -17,7 +17,7 @@ class Piece:
         self.image_rect.x = -10
         self.image_rect.y = -10
 
-    def __init__(self, position: tuple(), colour: Colour):
+    def __init__(self, position: tuple(), colour: Colour, row: int, col: int):
         self.position = position
         self.colour = colour
         self.radius = 15
@@ -30,6 +30,8 @@ class Piece:
                 self.image = pygame.image.load("piece-white.png")
         self.image_rect.x = -30
         self.image_rect.y = -30
+        self.row = row
+        self.col = col
 
     def render(self, surface: pygame.Surface):
         surface.blit(self.image, self.image_rect)

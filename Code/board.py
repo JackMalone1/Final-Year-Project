@@ -1,3 +1,4 @@
+import string
 from typing import Tuple
 from piece import Piece
 import pygame
@@ -14,9 +15,9 @@ class Text:
 
 
 class Board:
-    def __init__(self, background: pygame.image, size: int):
+    def __init__(self, background: pygame.image, size: int, font_path: string, piece_sound_effect_path):
         self.size = size - 1
-        self.font = freetype.Font("MONOFONT.ttf", 24)
+        self.font = freetype.Font(font_path, 24)
         self.numbers = ['' for i in range(self.size + 1)]
         self.letters = ['' for x in range(self.size + 1)]
         self.board = [[0 for x in range(self.size)] for y in range(self.size)]
@@ -27,9 +28,9 @@ class Board:
         self.tile_size = (w / self.size) * 0.9
         self.offset = 30
         self.set_up_grid()
-        self.piece_matrix = [[Piece((-10, -10), Colour.CLEAR) for x in range(self.size + 1)] for y in
+        self.piece_matrix = [[Piece((-10, -10), Colour.CLEAR, x, y) for x in range(self.size + 1)] for y in
                              range(self.size + 1)]
-        self.play_piece_sound = pygame.mixer.Sound('Assets/Sounds/place_piece.ogg')
+        self.play_piece_sound = pygame.mixer.Sound(piece_sound_effect_path)
 
     def render(self, screen: pygame.display) -> None:
         screen.blit(self.background, self.background_rect)
@@ -45,15 +46,18 @@ class Board:
         for x in range(self.size + 1):
             for y in range(self.size + 1):
                 if self.board_intersections[x][y].collidepoint(mouse_position):
-                    print("Collision")
-                    self.play_piece_sound.play()
-                    self.piece_matrix[x][y].set_position(self.board_intersections[x][y].center)
-                    if current_colour is player_turn.BLACK:
-                        self.piece_matrix[x][y].set_colour(Colour.BLACK)
-                    elif current_colour is player_turn.WHITE:
-                        self.piece_matrix[x][y].set_colour(Colour.WHITE)
-                    return True
+                    if self.piece_matrix[x][y].colour is Colour.CLEAR:
+                        self.play_piece_sound.play()
+                        self.place_piece_at_position(current_colour, (x, y))
+                        return True
         return False
+
+    def place_piece_at_position(self, current_colour: player_turn, position: tuple):
+        self.piece_matrix[position[0]][position[1]].set_position(self.board_intersections[position[0]][position[1]].center)
+        if current_colour is player_turn.BLACK:
+            self.piece_matrix[position[0]][position[1]].set_colour(Colour.BLACK)
+        elif current_colour is player_turn.WHITE:
+            self.piece_matrix[position[0]][position[1]].set_colour(Colour.WHITE)
 
     def set_up_numbers(self) -> None:
         starting_position = (self.board_intersections[-1][-1].x, self.board_intersections[-1][-1].y)

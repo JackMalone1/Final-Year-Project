@@ -18,7 +18,8 @@ def main():
 
     running = True
     background = pygame.image.load("Assets//background.jpg")
-    board = Board(background=background, size=19)
+    board = Board(background=background, size=19, font_path="MONOFONT.ttf",
+                  piece_sound_effect_path="Assets//Sounds//place_piece.ogg")
 
     current_colour = player_turn.BLACK
 
