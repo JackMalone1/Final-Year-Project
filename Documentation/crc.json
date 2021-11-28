@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Board",
+    "superclasses": "",
+    "subclasses": "",
+    "type": 1,
+    "responsibilities": [
+      "Display the grid of the board on the screen",
+      "Display the numbers and letters for each intersection on the screen",
+      "Store each of the pieces on the screen",
+      "Check if each move is legal before accepting a move"
+    ],
+    "collaborators": [
+      "Piece"
+    ]
+  },
+  {
+    "name": "Piece",
+    "superclasses": "",
+    "subclasses": "",
+    "type": 1,
+    "responsibilities": [
+      "Store the position of the piece on the board",
+      "Store the colour of the piece",
+      "Display the representation of the piece on the screen"
+    ],
+    "collaborators": [
+      "Colour",
+      "Board"
+    ]
+  },
+  {
+    "name": "Colour",
+    "superclasses": "",
+    "subclasses": "",
+    "type": 1,
+    "responsibilities": [
+      "Store the colour of a piece on the screen",
+      "Store as an empy colour if the piece has not been placed yet"
+    ],
+    "collaborators": [
+      "Piece"
+    ]
+  },
+  {
+    "name": "player_turn",
+    "superclasses": "",
+    "subclasses": "",
+    "type": 1,
+    "responsibilities": [
+      "Store who's turn it is supposed to be"
+    ],
+    "collaborators": [
+      "Main file that runs the game loop"
+    ]
+  }
+]
