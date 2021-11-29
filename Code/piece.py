@@ -33,8 +33,15 @@ class Piece:
         self.row = row
         self.col = col
 
+    def __eq__(self, other):
+        return self.row == other.row and self.col == other.col and self.colour == other.colour
+
+    def __hash__(self):
+        return hash(('row', self.row, 'col', self.col, 'colour', self.colour))
+
     def render(self, surface: pygame.Surface):
-        surface.blit(self.image, self.image_rect)
+        if self.colour != Colour.CLEAR:
+            surface.blit(self.image, self.image_rect)
 
     def set_position(self, position: tuple):
         self.image_rect.x = position[0] - 10

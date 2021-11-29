@@ -32,6 +32,7 @@ class Board:
         self.piece_matrix = [[Piece((-10, -10), Colour.CLEAR, row, col) for col in range(self.size + 1)] for row in
                              range(self.size + 1)]
         self.play_piece_sound = pygame.mixer.Sound(piece_sound_effect_path)
+        self.current_colour = player_turn.BLACK
 
     def render(self, screen: pygame.display) -> None:
         screen.blit(self.background, self.background_rect)
@@ -69,6 +70,9 @@ class Board:
                                                  self.piece_matrix[position[0]][position[1]].colour)
             for piece in group:
                 print("Row: ", piece.col, " Col: ", piece.row, " Colour: ", piece.colour)
+            liberties = self.get_liberties_for_group(group)
+            print("Number of liberties for group: ", len(liberties))
+            self.remove_captured_groups_from_board()
         return has_placed_piece
 
     def set_up_numbers(self) -> None:
@@ -169,3 +173,52 @@ class Board:
             if piece not in group:
                 self.create_group_from_piece(piece.row, piece.col, group, colour)
         return group
+
+    def get_all_groups_on_board(self):
+        groups = [[]]
+        has_been_checked = [[False for row in range(self.size)] for col in range(self.size)]
+
+        for row in range(self.size):
+            for col in range(self.size):
+                if self.piece_matrix[row][col].colour is not Colour.CLEAR:
+                    if has_been_checked[row][col] is False:
+                        group = self.create_group_from_piece(row, col, [], self.piece_matrix[row][col].colour)
+                        has_been_checked[row][col]
+                        groups.append(group)
+        return groups
+
+    def get_liberties_for_group(self, group) -> list:
+        all_liberties = []
+        for piece in group:
+            liberties = self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)
+            all_liberties.extend(liberties)
+        return list(set(all_liberties))
+
+    def get_legal_spots_to_play(self):
+        possible_moves = []
+        free_spaces = [piece for piece in self.piece_matrix if piece.colour is Colour.CLEAR]
+        for piece in free_spaces:
+            if len(self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)) > 0:
+                possible_moves.append(tuple(piece.row, piece.col))
+
+    def remove_pieces(self, group: list):
+        for piece in group:
+            piece.colour = Colour.CLEAR
+
+    def remove_captured_groups_from_board(self):
+        groups = self.get_all_groups_on_board()
+        for group in groups:
+            if len(group) > 0:
+                if self.current_colour is player_turn.BLACK and group[0].colour is not Colour.BLACK \
+                        or self.current_colour is player_turn.WHITE and group[0].colour is not Colour.WHITE:
+                    liberties = self.get_liberties_for_group(group)
+                    if len(liberties) == 0:
+                        self.remove_pieces(group)
+
+        for group in groups:
+            if len(group) > 0:
+                if self.current_colour is player_turn.BLACK and group[0].colour is Colour.BLACK \
+                        or self.current_colour is player_turn.WHITE and group[0].colour is Colour.WHITE:
+                    liberties = self.get_liberties_for_group(group)
+                    if len(liberties) == 0:
+                        self.remove_pieces(group)
