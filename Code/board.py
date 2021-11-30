@@ -7,6 +7,7 @@ from colours import Colour
 from player_turn import player_turn
 from string import ascii_uppercase
 from rules_check import *
+import copy
 
 
 class Text:
@@ -64,7 +65,17 @@ class Board:
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.WHITE)
+            has_placed_piece = True       
+        board_copy = self.piece_matrix.copy()
+        board_copy[position[0]][position[1]].set_position(
+            self.board_intersections[position[0]][position[1]].center
+        )
+        colour = Colour.BLACK if current_colour is player_turn.BLACK else Colour.WHITE
+        board_copy[position[0]][position[1]].set_colour(colour)
+        self.remove_captured_groups_from_board(board_copy)
+        if board_copy[position[0]][position[1]].colour == colour:
             has_placed_piece = True
+
         if has_placed_piece:
             group = self.create_group_from_piece(position[0], position[1], [],
                                                  self.piece_matrix[position[0]][position[1]].colour)
@@ -72,7 +83,8 @@ class Board:
                 print("Row: ", piece.col, " Col: ", piece.row, " Colour: ", piece.colour)
             liberties = self.get_liberties_for_group(group)
             print("Number of liberties for group: ", len(liberties))
-            self.remove_captured_groups_from_board()
+            self.remove_captured_groups_from_board(self.piece_matrix)
+            print("placed piece")
         return has_placed_piece
 
     def set_up_numbers(self) -> None:
@@ -174,15 +186,15 @@ class Board:
                 self.create_group_from_piece(piece.row, piece.col, group, colour)
         return group
 
-    def get_all_groups_on_board(self):
+    def get_all_groups_on_board(self, piece_matrix):
         groups = [[]]
         has_been_checked = [[False for row in range(self.size)] for col in range(self.size)]
 
         for row in range(self.size):
             for col in range(self.size):
-                if self.piece_matrix[row][col].colour is not Colour.CLEAR:
+                if piece_matrix[row][col].colour is not Colour.CLEAR:
                     if has_been_checked[row][col] is False:
-                        group = self.create_group_from_piece(row, col, [], self.piece_matrix[row][col].colour)
+                        group = self.create_group_from_piece(row, col, [], piece_matrix[row][col].colour)
                         has_been_checked[row][col]
                         groups.append(group)
         return groups
@@ -205,8 +217,8 @@ class Board:
         for piece in group:
             piece.colour = Colour.CLEAR
 
-    def remove_captured_groups_from_board(self):
-        groups = self.get_all_groups_on_board()
+    def remove_captured_groups_from_board(self, piece_matrix):
+        groups = self.get_all_groups_on_board(piece_matrix)
         for group in groups:
             if len(group) > 0:
                 if self.current_colour is player_turn.BLACK and group[0].colour is not Colour.BLACK \
