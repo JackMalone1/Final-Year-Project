@@ -1,11 +1,9 @@
 from os import system
 import pygame
-
+import thorpy
 from pygame.constants import FULLSCREEN, RESIZABLE
 from board import Board
 from player_turn import player_turn
-
-import dearpygui.dearpygui as dpg
 
 
 def main():
@@ -24,10 +22,20 @@ def main():
     current_colour = player_turn.BLACK
 
     clock = pygame.time.Clock()
+    slider = thorpy.SliderX(100, (12, 35), "My Slider")
+    button = thorpy.make_button("Quit", func=thorpy.functions.quit_func)
+    box = thorpy.Box(elements=[slider, button])
+    # we regroup all elements on a menu, even if we do not launch the menu
+    menu = thorpy.Menu(box)
+    # important : set the screen as surface for all elements
+    for element in menu.get_population():
+        element.surface = screen
+    # use the elements normally...
 
     while running:
         time_delta = clock.tick(60) / 1000.0
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.VIDEORESIZE:
@@ -44,8 +52,11 @@ def main():
                         current_colour = player_turn.WHITE
                     elif current_colour is player_turn.WHITE:
                         current_colour = player_turn.BLACK
-
+            menu.react(event)
         board.render(screen)
+        box.set_topleft((100, 100))
+        box.blit()
+        box.update()
         pygame.display.flip()
 
     pygame.quit()

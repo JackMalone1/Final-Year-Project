@@ -8,6 +8,7 @@ from player_turn import player_turn
 from string import ascii_uppercase
 from rules_check import *
 import copy
+from go_rules import *
 
 
 class Text:
@@ -56,35 +57,19 @@ class Board:
 
     def place_piece_at_position(self, current_colour: player_turn, position: tuple) -> bool:
         has_placed_piece = False
-        if current_colour is player_turn.BLACK and self.is_move_legal(position, Colour.BLACK):
+        rules = GoRules(self.piece_matrix, self.size)
+        if current_colour is player_turn.BLACK and rules.is_move_legal(position, Colour.BLACK, current_colour):
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.BLACK)
             has_placed_piece = True
-        elif current_colour is player_turn.WHITE and self.is_move_legal(position, Colour.WHITE):
+        elif current_colour is player_turn.WHITE and rules.is_move_legal(position, Colour.WHITE, current_colour):
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.WHITE)
             has_placed_piece = True       
-        board_copy = self.piece_matrix.copy()
-        board_copy[position[0]][position[1]].set_position(
-            self.board_intersections[position[0]][position[1]].center
-        )
-        colour = Colour.BLACK if current_colour is player_turn.BLACK else Colour.WHITE
-        board_copy[position[0]][position[1]].set_colour(colour)
-        self.remove_captured_groups_from_board(board_copy)
-        if board_copy[position[0]][position[1]].colour == colour:
-            has_placed_piece = True
-
         if has_placed_piece:
-            group = self.create_group_from_piece(position[0], position[1], [],
-                                                 self.piece_matrix[position[0]][position[1]].colour)
-            for piece in group:
-                print("Row: ", piece.col, " Col: ", piece.row, " Colour: ", piece.colour)
-            liberties = self.get_liberties_for_group(group)
-            print("Number of liberties for group: ", len(liberties))
-            self.remove_captured_groups_from_board(self.piece_matrix)
-            print("placed piece")
+            self.piece_matrix = rules.remove_captured_groups_from_board(self.piece_matrix)
         return has_placed_piece
 
     def set_up_numbers(self) -> None:
@@ -125,112 +110,3 @@ class Board:
     def get_piece_at_position(self, row: int, col: int) -> Piece:
         return self.piece_matrix[row][col]
 
-    def is_koish(self, row: int, col: int) -> Colour:
-        piece = self.get_piece_at_position(row, col)
-        if piece.colour is not Colour.CLEAR:
-            return None
-        colour = Colour.CLEAR
-        if row - 1 > 0 and self.get_piece_at_position(row - 1, col).colour is not Colour.CLEAR:
-            colour = self.get_piece_at_position(row - 1, col).colour
-        if col - 1 > 0 and self.get_piece_at_position(row, col - 1).colour is not colour:
-            return None
-        if row + 1 < self.size and self.get_piece_at_position(row + 1, col).colour is not colour:
-            return None
-        if col + 1 < self.size and self.get_piece_at_position(row, col + 1).colour is not colour:
-            return None
-        return colour
-
-    def get_adjacent_of_colour(self, row: int, col: int, colour: Colour) -> list:
-        adjacent_pieces = []
-        if row - 1 >= 0 and self.get_piece_at_position(row - 1, col).colour is colour:
-            adjacent_pieces.append(self.get_piece_at_position(row - 1, col))
-        if col - 1 >= 0 and self.get_piece_at_position(row, col - 1).colour is colour:
-            adjacent_pieces.append(self.get_piece_at_position(row, col - 1))
-        if row + 1 <= self.size and self.get_piece_at_position(row + 1, col).colour is colour:
-            adjacent_pieces.append(self.get_piece_at_position(row + 1, col))
-        if col + 1 <= self.size and self.get_piece_at_position(row, col + 1).colour is colour:
-            adjacent_pieces.append(self.get_piece_at_position(row, col + 1))
-        return adjacent_pieces
-
-    def is_move_legal(self, position: tuple, colour: Colour) -> bool:
-        if self.get_piece_at_position(position[0], position[1]).colour is not Colour.CLEAR:
-            return False
-        liberties = self.get_adjacent_of_colour(position[0], position[1], Colour.CLEAR)
-        surrounded_by_same_colour = self.get_adjacent_of_colour(position[0], position[1], colour)
-        opposite_colour = Colour.BLACK if colour is Colour.WHITE else Colour.WHITE
-        if not liberties and not surrounded_by_same_colour:
-            return False
-        if len(self.get_adjacent_of_colour(position[0], position[1], opposite_colour)) == 4:
-            return False
-        return True
-
-    def get_liberties_for_group(self, group: list) -> set:
-        liberties = set()
-
-        for piece in group:
-            piece_liberties = self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)
-            [liberties.add(liberty) for liberty in piece_liberties]
-
-        return liberties
-
-    def create_group_from_piece(self, row: int, col: int, group: list, colour: Colour) -> list:
-        if row > self.size or row < 0 or col < 0 or col > self.size:
-            return list()
-        if not group:
-            group = [self.get_piece_at_position(row, col)]
-        else:
-            group.append(self.get_piece_at_position(row, col))
-        adjacent_pieces = self.get_adjacent_of_colour(row, col, colour)
-        for piece in adjacent_pieces:
-            if piece not in group:
-                self.create_group_from_piece(piece.row, piece.col, group, colour)
-        return group
-
-    def get_all_groups_on_board(self, piece_matrix):
-        groups = [[]]
-        has_been_checked = [[False for row in range(self.size)] for col in range(self.size)]
-
-        for row in range(self.size):
-            for col in range(self.size):
-                if piece_matrix[row][col].colour is not Colour.CLEAR:
-                    if has_been_checked[row][col] is False:
-                        group = self.create_group_from_piece(row, col, [], piece_matrix[row][col].colour)
-                        has_been_checked[row][col]
-                        groups.append(group)
-        return groups
-
-    def get_liberties_for_group(self, group) -> list:
-        all_liberties = []
-        for piece in group:
-            liberties = self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)
-            all_liberties.extend(liberties)
-        return list(set(all_liberties))
-
-    def get_legal_spots_to_play(self):
-        possible_moves = []
-        free_spaces = [piece for piece in self.piece_matrix if piece.colour is Colour.CLEAR]
-        for piece in free_spaces:
-            if len(self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)) > 0:
-                possible_moves.append(tuple(piece.row, piece.col))
-
-    def remove_pieces(self, group: list):
-        for piece in group:
-            piece.colour = Colour.CLEAR
-
-    def remove_captured_groups_from_board(self, piece_matrix):
-        groups = self.get_all_groups_on_board(piece_matrix)
-        for group in groups:
-            if len(group) > 0:
-                if self.current_colour is player_turn.BLACK and group[0].colour is not Colour.BLACK \
-                        or self.current_colour is player_turn.WHITE and group[0].colour is not Colour.WHITE:
-                    liberties = self.get_liberties_for_group(group)
-                    if len(liberties) == 0:
-                        self.remove_pieces(group)
-
-        for group in groups:
-            if len(group) > 0:
-                if self.current_colour is player_turn.BLACK and group[0].colour is Colour.BLACK \
-                        or self.current_colour is player_turn.WHITE and group[0].colour is Colour.WHITE:
-                    liberties = self.get_liberties_for_group(group)
-                    if len(liberties) == 0:
-                        self.remove_pieces(group)

@@ -2,34 +2,22 @@ from typing import Tuple
 
 import pygame
 from colours import Colour
+from piece_display import *
 
 
 class Piece:
     def __init__(self) -> None:
-        pass
+        self.position = tuple()
 
     def __init__(self, position: tuple()):
         self.position = position
         self.colour = Colour.CLEAR
         self.radius = 15
-        self.image = pygame.image.load("piece-black.png")
-        self.image_rect = self.image.get_rect()
-        self.image_rect.x = -10
-        self.image_rect.y = -10
 
     def __init__(self, position: tuple(), colour: Colour, row: int, col: int):
         self.position = position
         self.colour = colour
         self.radius = 15
-        self.image = pygame.image.load("piece-black.png")
-        self.image_rect = self.image.get_rect()
-        if colour is not Colour.CLEAR:
-            if colour is Colour.BLACK:
-                self.image = pygame.image.load("piece-black.png")
-            elif colour is Colour.WHITE:
-                self.image = pygame.image.load("piece-white.png")
-        self.image_rect.x = -30
-        self.image_rect.y = -30
         self.row = row
         self.col = col
 
@@ -41,20 +29,24 @@ class Piece:
 
     def render(self, surface: pygame.Surface):
         if self.colour != Colour.CLEAR:
-            surface.blit(self.image, self.image_rect)
+            if self.colour is not Colour.CLEAR:
+                if self.colour is Colour.BLACK:
+                    image = black_piece_image
+                elif self.colour is Colour.WHITE:
+                    image = white_piece_image
+
+                image_rect = image.get_rect()
+                image_rect.x = self.position[0]
+                image_rect.y = self.position[1]
+                surface.blit(image, image_rect)
 
     def set_position(self, position: tuple):
-        self.image_rect.x = position[0] - 10
-        self.image_rect.y = position[1] - 10
+        # can't modify tuple so convert to list to make the update and then we can convert back to a tuple
+        position_list = list(self.position)
+        position_list[0] = position[0] - 10
+        position_list[1] = position[1] - 10
+        self.position = tuple(position_list)
 
     def set_colour(self, colour: Colour):
         self.colour = colour
-        if colour is not Colour.CLEAR:
-            if colour is Colour.BLACK:
-                self.image = pygame.image.load("piece-black.png")
-            elif colour is Colour.WHITE:
-                self.image = pygame.image.load("piece-white.png")
-            pos = (self.image_rect.x, self.image_rect.y)
-            self.image_rect = self.image.get_rect()
-            self.image_rect.x = pos[0]
-            self.image_rect.y = pos[1]
+
