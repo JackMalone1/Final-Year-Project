@@ -19,6 +19,7 @@ class Text:
 
 class Board:
     def __init__(self, background: pygame.image, size: int, font_path: string, piece_sound_effect_path):
+
         self.size = size - 1
         self.font = freetype.Font(font_path, 24)
         self.numbers = ['' for i in range(self.size + 1)]
@@ -35,6 +36,7 @@ class Board:
                              range(self.size + 1)]
         self.play_piece_sound = pygame.mixer.Sound(piece_sound_effect_path)
         self.current_colour = player_turn.BLACK
+        self.rules = GoRules(self.piece_matrix, self.size)
 
     def render(self, screen: pygame.display) -> None:
         screen.blit(self.background, self.background_rect)
@@ -57,19 +59,21 @@ class Board:
 
     def place_piece_at_position(self, current_colour: player_turn, position: tuple) -> bool:
         has_placed_piece = False
-        rules = GoRules(self.piece_matrix, self.size)
-        if current_colour is player_turn.BLACK and rules.is_move_legal(position, Colour.BLACK, current_colour):
+        if current_colour is player_turn.BLACK and self.rules.is_move_legal(position, Colour.BLACK, current_colour):
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.BLACK)
             has_placed_piece = True
-        elif current_colour is player_turn.WHITE and rules.is_move_legal(position, Colour.WHITE, current_colour):
+        elif current_colour is player_turn.WHITE and self.rules.is_move_legal(position, Colour.WHITE, current_colour):
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.WHITE)
             has_placed_piece = True       
         if has_placed_piece:
-            self.piece_matrix = rules.remove_captured_groups_from_board(self.piece_matrix)
+            colour = Colour.BLACK if current_colour is player_turn.BLACK else Colour.WHITE
+            rules = GoRules(self.piece_matrix, self.size)
+            self.piece_matrix = rules.remove_captured_groups_from_board(self.piece_matrix, colour)
+            print("Placed piece at position, row: ", position[0], " col: ", position[1])
         return has_placed_piece
 
     def set_up_numbers(self) -> None:

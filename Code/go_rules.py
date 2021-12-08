@@ -5,9 +5,9 @@ from player_turn import player_turn
 from piece import Piece
 
 
-def remove_pieces(group: list):
+def remove_pieces(group: list, piece_matrix):
     for piece in group:
-        piece.colour = Colour.CLEAR
+        piece_matrix[piece.row][piece.col].colour = Colour.CLEAR
 
 
 def is_koish(row: int, col: int, piece_matrix) -> Colour:
@@ -31,9 +31,15 @@ class GoRules:
         self.size = size
         self.piece_matrix = piece_matrix
         self.current_colour = player_turn.BLACK
+        self.number_of_opposite_captured = 0
+        self.ko_position = (-1, -1)
+        self.captured_groups = []
 
     def get_piece_at_position(self, row: int, col: int) -> Piece:
         return self.piece_matrix[row][col]
+
+    def get_piece_at_position_on_board(self, row: int, col: int, piece_matrix) -> Piece:
+        return piece_matrix[row][col]
 
     def get_adjacent_of_colour(self, row: int, col: int, colour: Colour) -> list:
         adjacent_pieces = []
@@ -47,6 +53,18 @@ class GoRules:
             adjacent_pieces.append(self.get_piece_at_position(row, col + 1))
         return adjacent_pieces
 
+    def get_adjacent_of_colour_on_board(self, row: int, col: int, colour: Colour, piece_matrix) -> list:
+        adjacent_pieces = []
+        if row - 1 >= 0 and self.get_piece_at_position_on_board(row - 1, col, piece_matrix).colour is colour:
+            adjacent_pieces.append(self.get_piece_at_position_on_board(row - 1, col, piece_matrix))
+        if col - 1 >= 0 and self.get_piece_at_position_on_board(row, col - 1, piece_matrix).colour is colour:
+            adjacent_pieces.append(self.get_piece_at_position_on_board(row, col - 1, piece_matrix))
+        if row + 1 <= self.size and self.get_piece_at_position_on_board(row + 1, col, piece_matrix).colour is colour:
+            adjacent_pieces.append(self.get_piece_at_position_on_board(row + 1, col, piece_matrix))
+        if col + 1 <= self.size and self.get_piece_at_position_on_board(row, col + 1, piece_matrix).colour is colour:
+            adjacent_pieces.append(self.get_piece_at_position_on_board(row, col + 1, piece_matrix))
+        return adjacent_pieces
+
     def is_move_legal(self, position: tuple, colour: Colour, current_colour: player_turn) -> bool:
         self.current_colour = current_colour
         if self.piece_matrix[position[0]][position[1]].colour is not Colour.CLEAR:
@@ -56,12 +74,31 @@ class GoRules:
         opposite_colour = Colour.BLACK if colour is Colour.WHITE else Colour.WHITE
         board_copy = copy.deepcopy(self.piece_matrix)
         board_copy[position[0]][position[1]].colour = colour
-        self.remove_captured_groups_from_board(board_copy)
+        self.number_of_opposite_captured = 0
+        self.remove_captured_groups_from_board(board_copy, colour)
         can_be_placed = True if board_copy[position[0]][position[1]].colour is colour else False
         if not liberties and not surrounded_by_same_colour and not can_be_placed:
             return False
-        if len(self.get_adjacent_of_colour(position[0], position[1], opposite_colour)) == 4 and not can_be_placed:
+        print(len(self.get_adjacent_of_colour_on_board(position[0], position[1], opposite_colour, board_copy)))
+        if len(self.get_adjacent_of_colour_on_board(position[0], position[1], opposite_colour, board_copy)) == 4 and \
+                can_be_placed is False:
             return False
+
+        if len(self.create_group_from_piece(position[0], position[1], [], colour)) == 1:
+            if self.number_of_opposite_captured == 1:
+                return False
+        #possible_ko_colour = is_koish(position[0], position[1], self.piece_matrix)
+        #if len(self.captured_groups) > 0:
+            #captured_piece_position = (self.captured_groups[0].row, self.captured_groups[0].col)
+            #if position == self.ko_position:
+                #print("Positions match")
+                #return False
+           # if self.number_of_opposite_captured == 1 and possible_ko_colour == opposite_colour:
+                # self.ko_position = (self.captured_groups[0].row, self.captured_groups[0].col)
+                #self.ko_position = captured_piece_position
+                #print("ko position, row: ", self.ko_position[0], " col: ", self.ko_position[1])
+                #print("position, row: ", position[0], " col: ", position[1])
+
         return True
 
     def get_liberties_for_group(self, group: list) -> set:
@@ -114,15 +151,17 @@ class GoRules:
                 possible_moves.append(tuple(piece.row, piece.col))
         return possible_moves
 
-    def remove_captured_groups_from_board(self, piece_matrix):
+    def remove_captured_groups_from_board(self, piece_matrix, colour):
         groups = self.get_all_groups_on_board(piece_matrix)
+        opposite_colour = Colour.BLACK if colour is Colour.WHITE else Colour.WHITE
         for group in groups:
             if len(group) > 0:
                 if self.current_colour is player_turn.BLACK and group[0].colour is not Colour.BLACK \
                         or self.current_colour is player_turn.WHITE and group[0].colour is not Colour.WHITE:
                     liberties = self.get_liberties_for_group(group)
                     if len(liberties) == 0:
-                        remove_pieces(group)
+                        self.number_of_opposite_captured += 1
+                        remove_pieces(group, piece_matrix)
 
         for group in groups:
             if len(group) > 0:
@@ -130,5 +169,5 @@ class GoRules:
                         or self.current_colour is player_turn.WHITE and group[0].colour is Colour.WHITE:
                     liberties = self.get_liberties_for_group(group)
                     if len(liberties) == 0:
-                        remove_pieces(group)
+                        remove_pieces(group, piece_matrix)
         return piece_matrix

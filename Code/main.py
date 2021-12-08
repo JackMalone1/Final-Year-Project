@@ -55,8 +55,8 @@ def main():
             menu.react(event)
         board.render(screen)
         box.set_topleft((100, 100))
-        box.blit()
-        box.update()
+        #box.blit()
+        #box.update()
         pygame.display.flip()
 
     pygame.quit()
