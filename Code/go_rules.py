@@ -87,17 +87,7 @@ class GoRules:
         if len(self.create_group_from_piece(position[0], position[1], [], colour)) == 1:
             if self.number_of_opposite_captured == 1:
                 return False
-        #possible_ko_colour = is_koish(position[0], position[1], self.piece_matrix)
-        #if len(self.captured_groups) > 0:
-            #captured_piece_position = (self.captured_groups[0].row, self.captured_groups[0].col)
-            #if position == self.ko_position:
-                #print("Positions match")
-                #return False
-           # if self.number_of_opposite_captured == 1 and possible_ko_colour == opposite_colour:
-                # self.ko_position = (self.captured_groups[0].row, self.captured_groups[0].col)
-                #self.ko_position = captured_piece_position
-                #print("ko position, row: ", self.ko_position[0], " col: ", self.ko_position[1])
-                #print("position, row: ", position[0], " col: ", position[1])
+
 
         return True
 
