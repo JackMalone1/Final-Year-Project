@@ -1,6 +1,7 @@
 from enum import Enum
 
-class player_turn(Enum):
+
+class PlayerTurn(Enum):
     FINISHED = -1
     BLACK = 0
     WHITE = 1

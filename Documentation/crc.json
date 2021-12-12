@@ -8,10 +8,17 @@
       "Display the grid of the board on the screen",
       "Display the numbers and letters for each intersection on the screen",
       "Store each of the pieces on the screen",
-      "Check if each move is legal before accepting a move"
+      "Check if each move is legal before accepting a move by using the rules class",
+      "Keep track of who the current player is so that the AI can query the board",
+      "Return a game state of the board after a certain move is applied",
+      "Store all of the legal possible moves by using the rules class",
+      "Check if a player has won the game in a given board state"
     ],
     "collaborators": [
-      "Piece"
+      "Piece",
+      "Go Rules",
+      "Monte Carlo Class",
+      "Game class"
     ]
   },
   {
@@ -52,6 +59,54 @@
     ],
     "collaborators": [
       "Main file that runs the game loop"
+    ]
+  },
+  {
+    "name": "Go Rules",
+    "superclasses": "",
+    "subclasses": "",
+    "type": 1,
+    "responsibilities": [
+      "Return if a move is legal",
+      "Go through each rule and check that a move complies by it",
+      "Be able to find all of the places on the board where a legal move can be played so that the ai is able to make a move"
+    ],
+    "collaborators": [
+      "Piece",
+      "Board"
+    ]
+  },
+  {
+    "name": "Monte Carlo Tree",
+    "superclasses": "",
+    "subclasses": "",
+    "type": 1,
+    "responsibilities": [
+      "Calculate the best move from the current position",
+      "Play out random games from the current position to try and find the best move",
+      "Store all of the previous game states to be able to remember what the best move was"
+    ],
+    "collaborators": [
+      "Board"
+    ]
+  },
+  {
+    "name": "Game",
+    "superclasses": "",
+    "subclasses": "",
+    "type": 1,
+    "responsibilities": [
+      "Run the game loop",
+      "Check for inputs from the user",
+      "Display the UI",
+      "Make sure that the correct screen is being displayed, eg. Main menu, game and game over",
+      "Render the Game board",
+      "Alter who's turn it is after each move"
+    ],
+    "collaborators": [
+      "Board",
+      "Piece",
+      "Main function"
     ]
   }
 ]

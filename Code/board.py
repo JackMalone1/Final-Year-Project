@@ -4,9 +4,8 @@ from piece import Piece
 import pygame
 from pygame import freetype
 from colours import Colour
-from player_turn import player_turn
+from playerturn import PlayerTurn
 from string import ascii_uppercase
-from rules_check import *
 import copy
 from go_rules import *
 
@@ -28,14 +27,14 @@ class Board:
         self.board_intersections = [[0 for x in range(self.size + 1)] for y in range(self.size + 1)]
         self.background = background
         self.background_rect = background.get_rect()
-        w, h = pygame.display.get_surface().get_size()
+        w, h = (800, 800)
         self.tile_size = (w / self.size) * 0.9
         self.offset = 30
         self.set_up_grid()
         self.piece_matrix = [[Piece((-10, -10), Colour.CLEAR, row, col) for col in range(self.size + 1)] for row in
                              range(self.size + 1)]
         self.play_piece_sound = pygame.mixer.Sound(piece_sound_effect_path)
-        self.current_colour = player_turn.BLACK
+        self.current_colour = PlayerTurn.BLACK
         self.rules = GoRules(self.piece_matrix, self.size)
 
     def render(self, screen: pygame.display) -> None:
@@ -48,7 +47,7 @@ class Board:
         [self.font.render_to(screen, number.position, number.string, (0, 0, 0)) for number in self.numbers]
         [self.font.render_to(screen, letter.position, letter.string, (0, 0, 0)) for letter in self.letters]
 
-    def check_mouse_position(self, mouse_position, current_colour: player_turn) -> bool:
+    def check_mouse_position(self, mouse_position, current_colour: PlayerTurn) -> bool:
         for x in range(self.size + 1):
             for y in range(self.size + 1):
                 if self.board_intersections[x][y].collidepoint(mouse_position):
@@ -57,23 +56,21 @@ class Board:
                         return self.place_piece_at_position(current_colour, (x, y))
         return False
 
-    def place_piece_at_position(self, current_colour: player_turn, position: tuple) -> bool:
+    def place_piece_at_position(self, current_colour: PlayerTurn, position: tuple) -> bool:
         has_placed_piece = False
-        if current_colour is player_turn.BLACK and self.rules.is_move_legal(position, Colour.BLACK, current_colour):
+        rules = GoRules(self.piece_matrix, self.size)
+        if current_colour is PlayerTurn.BLACK and rules.is_move_legal(position, Colour.BLACK, current_colour):
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.BLACK)
             has_placed_piece = True
-        elif current_colour is player_turn.WHITE and self.rules.is_move_legal(position, Colour.WHITE, current_colour):
+        elif current_colour is PlayerTurn.WHITE and rules.is_move_legal(position, Colour.WHITE, current_colour):
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.WHITE)
-            has_placed_piece = True       
+            has_placed_piece = True
         if has_placed_piece:
-            colour = Colour.BLACK if current_colour is player_turn.BLACK else Colour.WHITE
-            rules = GoRules(self.piece_matrix, self.size)
-            self.piece_matrix = rules.remove_captured_groups_from_board(self.piece_matrix, colour)
-            print("Placed piece at position, row: ", position[0], " col: ", position[1])
+            self.piece_matrix = rules.remove_captured_groups_from_board(self.piece_matrix)
         return has_placed_piece
 
     def set_up_numbers(self) -> None:

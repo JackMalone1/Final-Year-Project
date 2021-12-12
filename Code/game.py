@@ -1,9 +1,10 @@
+import sys
 from os import system
 import pygame
 import thorpy
 from pygame.constants import FULLSCREEN, RESIZABLE
 from board import Board
-from player_turn import player_turn
+from playerturn import PlayerTurn
 
 
 class GameManager:
@@ -15,26 +16,48 @@ class GameManager:
         pygame.init()
         logo = pygame.image.load("logo32x32.png")
         pygame.display.set_icon(logo)
-        pygame.display.set_caption("test program")
-        self.screen = pygame.display.set_mode((800, 800), RESIZABLE)
+        pygame.display.set_caption("Monte Carlo Tree Search")
+        self.width = 1000
+        self.height = 800
+        self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
         self.running = True
         background = pygame.image.load("Assets//background.jpg")
         self.board = Board(background=background, size=19, font_path="MONOFONT.ttf",
                            piece_sound_effect_path="Assets//Sounds//place_piece.ogg")
         self.clock = pygame.time.Clock()
-        self.current_colour = player_turn.BLACK
+        self.current_colour = PlayerTurn.BLACK
         self.time_delta = 0
+        self.has_passed = False
+        self.game_running = False
+        self.game_over = False
+
+    def pass_func(self):
+        if self.has_passed:
+            self.game_running = False
+            self.game_over = True
+        self.has_passed = True
+        if self.current_colour is PlayerTurn.BLACK:
+            self.current_colour = PlayerTurn.WHITE
+        elif self.current_colour is PlayerTurn.WHITE:
+            self.current_colour = PlayerTurn.BLACK
+
+    def start_game(self):
+        self.game_running = True
 
     def init_ui(self):
-        self.slider = thorpy.SliderX(100, (12, 35), "My Slider")
         self.button = thorpy.make_button("Quit", func=thorpy.functions.quit_func)
-        self.box = thorpy.Box(elements=[self.slider, self.button])
+        self.pass_button = thorpy.make_button("Pass", func=self.pass_func)
+        self.box = thorpy.Box(elements=[self.button, self.pass_button])
         # we regroup all elements on a menu, even if we do not launch the menu
         self.menu = thorpy.Menu(self.box)
         # important : set the screen as surface for all elements
         for element in self.menu.get_population():
             element.surface = self.screen
         # use the elements normally...
+
+        self.play_game = thorpy.make_button("Play Game", func=self.start_game)
+        self.main_menu_box = thorpy.Box(elements=[self.play_game])
+        self.main_menu = thorpy.Menu(self.main_menu_box)
 
     def run(self):
         while self.running:
@@ -47,30 +70,41 @@ class GameManager:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.VIDEORESIZE:
-                self.resize_window()
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                self.resize_window(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.game_running:
                 self.place_piece()
-            self.menu.react(event)
 
+            if self.game_running:
+                self.menu.react(event)
+            elif not self.game_over:
+                self.main_menu.react(event)
+                
     def place_piece(self):
         placed_piece = self.board.check_mouse_position(pygame.mouse.get_pos(), self.current_colour)
         if placed_piece:
-            if self.current_colour is player_turn.BLACK:
-                self.current_colour = player_turn.WHITE
-            elif self.current_colour is player_turn.WHITE:
-                self.current_colour = player_turn.BLACK
+            self.has_passed = False
+            if self.current_colour is PlayerTurn.BLACK:
+                self.current_colour = PlayerTurn.WHITE
+            elif self.current_colour is PlayerTurn.WHITE:
+                self.current_colour = PlayerTurn.BLACK
                 
     def resize_window(self, event):
         width, height = event.size
-        if width < 800:
-            width = 800
-        if height < 800:
-            height = 800
+        if width < self.width:
+            width = self.width
+        if height < self.height:
+            height = self.height
         self.screen = pygame.display.set_mode((width, height), RESIZABLE)
 
     def render(self):
-        self.board.render(self.screen)
-        self.box.set_topleft((100, 100))
-        # box.blit()
-        # box.update()
+        if self.game_running:
+            self.board.render(self.screen)
+            self.box.set_topleft((self.width - 225, 100))
+            self.box.blit()
+            self.box.update()
+        elif not self.game_over:
+            self.main_menu_box.set_topleft((self.width / 2, self.height / 2))
+            self.main_menu_box.blit()
+            self.main_menu_box.update()
+
         pygame.display.flip()
