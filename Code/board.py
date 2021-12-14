@@ -56,47 +56,40 @@ class Board:
                         return self.place_piece_at_position(current_colour, (x, y))
         return False
 
+    def place_ko(self, rules, colour, position):
+        row, col = rules.killed_groups[0][0].row, rules.killed_groups[0][0].col
+        self.piece_matrix[row][col].set_colour(Colour.Ko)
+        self.piece_matrix[position[0]][position[1]].set_position(
+            self.board_intersections[position[0]][position[1]].center)
+        self.piece_matrix[position[0]][position[1]].set_colour(colour)
+
+    def remove_ko(self, colour, position):
+        self.piece_matrix[position[0]][position[1]].set_position(
+            self.board_intersections[position[0]][position[1]].center)
+        self.piece_matrix[position[0]][position[1]].set_colour(colour)
+
+        for row in self.piece_matrix:
+            for piece in row:
+                if piece.colour is Colour.Ko:
+                    piece.colour = Colour.CLEAR
+
     def place_piece_at_position(self, current_colour: PlayerTurn, position: tuple) -> bool:
         has_placed_piece = False
         rules = GoRules(self.piece_matrix, self.size)
         if current_colour is PlayerTurn.BLACK and rules.is_move_legal(position, Colour.BLACK, current_colour):
             if rules.possible_ko:
-                print("has ko")
                 has_placed_piece = True
-                row, col = rules.killed_groups[0][0].row, rules.killed_groups[0][0].col
-                self.piece_matrix[row][col].set_colour(Colour.Ko)
-                self.piece_matrix[position[0]][position[1]].set_position(
-                    self.board_intersections[position[0]][position[1]].center)
-                self.piece_matrix[position[0]][position[1]].set_colour(Colour.BLACK)
+                self.place_ko(rules, Colour.BLACK, position)
             else:
-                print("has placed piece")
-                self.piece_matrix[position[0]][position[1]].set_position(
-                    self.board_intersections[position[0]][position[1]].center)
-                self.piece_matrix[position[0]][position[1]].set_colour(Colour.BLACK)
                 has_placed_piece = True
-                for row in self.piece_matrix:
-                    for piece in row:
-                        if piece.colour is Colour.Ko:
-                            piece.colour = Colour.CLEAR
+                self.remove_ko(Colour.BLACK, position)
         elif current_colour is PlayerTurn.WHITE and rules.is_move_legal(position, Colour.WHITE, current_colour):
             if rules.possible_ko:
-                print("has ko")
                 has_placed_piece = True
-                row, col = rules.killed_groups[0][0].row, rules.killed_groups[0][0].col
-                self.piece_matrix[row][col].set_colour(Colour.Ko)
-                self.piece_matrix[position[0]][position[1]].set_position(
-                    self.board_intersections[position[0]][position[1]].center)
-                self.piece_matrix[position[0]][position[1]].set_colour(Colour.WHITE)
+                self.place_ko(rules, Colour.WHITE, position)
             else:
-                print("has placed piece")
-                self.piece_matrix[position[0]][position[1]].set_position(
-                    self.board_intersections[position[0]][position[1]].center)
-                self.piece_matrix[position[0]][position[1]].set_colour(Colour.WHITE)
                 has_placed_piece = True
-                for row in self.piece_matrix:
-                    for piece in row:
-                        if piece.colour is Colour.Ko:
-                            piece.colour = Colour.CLEAR
+                self.remove_ko(Colour.WHITE, position)
         if has_placed_piece:
             print("has placed piece")
             rules = GoRules(self.piece_matrix, self.size)
