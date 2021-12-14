@@ -28,7 +28,7 @@ class Piece:
         return hash(('row', self.row, 'col', self.col, 'colour', self.colour))
 
     def render(self, surface: pygame.Surface):
-        if self.colour != Colour.CLEAR:
+        if self.colour != Colour.CLEAR and self.colour != Colour.Ko:
             if self.colour is not Colour.CLEAR:
                 if self.colour is Colour.BLACK:
                     image = black_piece_image

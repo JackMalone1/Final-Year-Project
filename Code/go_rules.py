@@ -11,9 +11,6 @@ def remove_pieces(group: list):
 
 
 def is_koish(row: int, col: int, piece_matrix) -> set:
-    piece = piece_matrix[row][col]
-    #if piece.colour is not Colour.CLEAR:
-        #return None
     colours = list()
     if row - 1 > 0:
         colours.append(int(piece_matrix[row - 1][col].colour))
@@ -33,6 +30,7 @@ class GoRules:
         self.current_colour = PlayerTurn.BLACK
         self.possible_ko = False
         self.ko_position = None
+        self.killed_groups = []
 
     def get_piece_at_position(self, row: int, col: int) -> Piece:
         return self.piece_matrix[row][col]
@@ -56,7 +54,6 @@ class GoRules:
         self.opposite_colour = Colour.BLACK if colour is Colour.WHITE else Colour.WHITE
 
         board_copy = self.piece_matrix.copy()
-        self.killed_groups = []
 
         for i in range(len(self.piece_matrix)):
             for j in range(len(self.piece_matrix)):
@@ -64,25 +61,23 @@ class GoRules:
         board_copy[position[0]][position[1]].colour = colour
         self.remove_captured_groups_from_board(board_copy)
         liberties = self.get_adjacent_of_colour(position[0], position[1], Colour.CLEAR)
+        liberties.extend(self.get_adjacent_of_colour(position[0], position[1], Colour.Ko))
         surrounded_by_same_colour = self.get_adjacent_of_colour(position[0], position[1], colour)
         can_be_placed = True if board_copy[position[0]][position[1]].colour is colour else False
         if not liberties and not surrounded_by_same_colour and not can_be_placed:
             return False
         if len(self.get_adjacent_of_colour(position[0], position[1], self.opposite_colour)) == 4 and not can_be_placed:
             return False
-        #ko = is_koish(position[0], position[1], board_copy)
-        #if ko is not None:
-            #for colour in ko:
-                #print(Colour(colour))
-        #if ko is not None and len(ko) == 4 and not int(Colour.CLEAR) in ko and not int(colour) in ko:
-            #return False
         print(self.killed_groups)
+        self.possible_ko = False
         if len(self.killed_groups) == 1 and len(self.killed_groups[0]) == 1:
             print(self.opposite_colour)
             print(self.killed_groups[0][0].colour)
             print("Ko")
+            self.possible_ko = True
             self.ko_position = self.killed_groups[0][0].row, self.killed_groups[0][0].col
             return True
+        
         return True
 
     def get_liberties_for_group(self, group: list) -> set:
@@ -125,6 +120,7 @@ class GoRules:
         for piece in group:
             liberties = self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)
             all_liberties.extend(liberties)
+            all_liberties.extend(self.get_adjacent_of_colour(piece.row, piece.col, Colour.Ko))
         return list(set(all_liberties))
 
     def get_legal_spots_to_play(self, piece_matrix):
@@ -141,16 +137,18 @@ class GoRules:
         for group in groups:
             if len(group) > 0:
                 if group[0].colour == self.opposite_colour:
-                    liberties = self.get_liberties_for_group(group)
-                    if len(liberties) == 0:
-                        self.killed_groups.append(copy.deepcopy(group))
-                        remove_pieces(group)
+                    if group[0].colour != Colour.Ko:
+                        liberties = self.get_liberties_for_group(group)
+                        if len(liberties) == 0:
+                            self.killed_groups.append(copy.deepcopy(group))
+                            remove_pieces(group)
 
         for group in groups:
             if len(group) > 0:
                 if group[0].colour != self.opposite_colour and group[0].colour != Colour.CLEAR:
-                    liberties = self.get_liberties_for_group(group)
-                    if len(liberties) == 0:
-                        self.killed_groups.append(copy.deepcopy(group))
-                        remove_pieces(group)
+                    if group[0].colour != Colour.Ko:
+                        liberties = self.get_liberties_for_group(group)
+                        if len(liberties) == 0:
+                            self.killed_groups.append(copy.deepcopy(group))
+                            remove_pieces(group)
         return piece_matrix
