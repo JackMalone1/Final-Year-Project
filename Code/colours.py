@@ -1,6 +1,7 @@
-from enum import Enum
+from enum import IntEnum
 import pygame
-class Colour(Enum):
-    BLACK = pygame.Color(0,0,0,255)
-    WHITE = pygame.Color(255,255,255,255)
-    CLEAR = pygame.Color(0,0,0,0)
+class Colour(IntEnum):
+    BLACK = 0
+    WHITE = 1
+    CLEAR = 2
+    Ko = 3

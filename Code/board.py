@@ -60,11 +60,15 @@ class Board:
         has_placed_piece = False
         rules = GoRules(self.piece_matrix, self.size)
         if current_colour is PlayerTurn.BLACK and rules.is_move_legal(position, Colour.BLACK, current_colour):
+            # if rules.ko_position is not None:
+            #     self.piece_matrix[rules.ko_position[0]][rules.ko_position[1]].colour = Colour.Ko
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.BLACK)
             has_placed_piece = True
         elif current_colour is PlayerTurn.WHITE and rules.is_move_legal(position, Colour.WHITE, current_colour):
+            # if rules.ko_position is not None:
+            #     self.piece_matrix[rules.ko_position[0]][rules.ko_position[1]].colour = Colour.Ko
             self.piece_matrix[position[0]][position[1]].set_position(
                 self.board_intersections[position[0]][position[1]].center)
             self.piece_matrix[position[0]][position[1]].set_colour(Colour.WHITE)
