@@ -131,6 +131,10 @@ class GoRules:
                 possible_moves.append(tuple(piece.row, piece.col))
         return possible_moves
 
+    def next_state(self, piece_matrix, position):
+        piece_matrix[position[0]][position[1]].colour = Colour.BLACK
+        return piece_matrix
+
     def remove_captured_groups_from_board(self, piece_matrix):
         groups = self.get_all_groups_on_board(piece_matrix)
         groups = [group for group in groups if group != []]
@@ -152,3 +156,11 @@ class GoRules:
                             self.killed_groups.append(copy.deepcopy(group))
                             remove_pieces(group)
         return piece_matrix
+
+    def get_next_board_state(self, board_state, move):
+        pass
+
+    def winner(self, state_history):
+        #if the game is won, return which player won the game, otherwise return if it's still being played or
+        #return if it is a tie
+        pass

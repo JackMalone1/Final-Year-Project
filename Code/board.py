@@ -9,6 +9,8 @@ from string import ascii_uppercase
 import copy
 from go_rules import *
 
+from Code.go_rules import GoRules
+
 
 class Text:
     def __init__(self, text: str, position: tuple):
@@ -36,6 +38,7 @@ class Board:
         self.play_piece_sound = pygame.mixer.Sound(piece_sound_effect_path)
         self.current_colour = PlayerTurn.BLACK
         self.rules = GoRules(self.piece_matrix, self.size)
+
 
     def render(self, screen: pygame.display) -> None:
         screen.blit(self.background, self.background_rect)
