@@ -13,6 +13,7 @@ class Node:
         self.children = []
         self.total_simulations = 0
         self.won_simulations = 0
+        self.position = tuple(-1, -1)
 
     def __init__(self, board: Board, player: PlayerTurn):
         self.__init__(self)
