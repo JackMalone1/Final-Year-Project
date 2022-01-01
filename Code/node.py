@@ -34,6 +34,12 @@ class Node:
     def backup(self, evaluation):
         pass
 
+    def expand_node(self):
+        pass
+
+    def get_best_child(self):
+        pass
+
     # usual value for the exploration constant is sqrt(2)
     def uct1(self, exploration_param):
         return (self.won_simulation / self.total_simulations) + (exploration_param *

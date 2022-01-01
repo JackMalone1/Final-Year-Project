@@ -1,7 +1,9 @@
+from copy import copy
 from datetime import datetime
 from random import choice
 
 from go_rules import GoRules
+from node import Node
 
 
 class MonteCarloTreeSearch:
@@ -12,9 +14,10 @@ class MonteCarloTreeSearch:
         self.states = []
         self.max_moves = kwargs.get('max_moves', 100)
 
-
     def get_best_move_in_time(self, board, allowed_time):
-        pass
+        start_time = datetime.datetime.utcnow()
+        while datetime.datetime.utcnow() - start_time < allowed_time:
+            pass
 
     def update(self, state):
         self.states.append(state)
@@ -23,6 +26,11 @@ class MonteCarloTreeSearch:
         begin = datetime.datetime.utcnow()
         while datetime.datetime.utcnow() - begin < self.calculation_time:
             self.run_simulation()
+
+    def expansion(self, node: Node):
+        n = copy(node)
+        rules = GoRules()
+        available_moves = rules.get_legal_spots_to_play(n.board)
 
     def run_simulation(self):
         states_copy = self.states[:]
