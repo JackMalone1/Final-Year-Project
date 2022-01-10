@@ -1,3 +1,7 @@
+import math
+import sys
+from random import choice
+
 from board import Board
 from colours import Colour
 from playerturn import PlayerTurn
@@ -33,13 +37,30 @@ class Node:
             self.board.piece_matrix[position[0]][position[1]].colour = self.current_colour
 
     def backup(self, evaluation):
-        pass
+        self.score += evaluation
+        self.visited += 1
+        
+        if self.parent is not None:
+            self.parent.backup(evaluation)
 
     def expand_node(self):
-        pass
+        if len(self.possible_moves) > 0:
+            node = choice(self.possible_moves)
+            self.children.append(node)
+            return node
+        return None
+
+    def get_more_moves(self, moves):
+        [self.possible_moves.append(Node(self, Colour.WHITE, move)) for move in moves]
 
     def get_best_child(self):
-        pass
+        best_child = None
+        best_value = -sys.maxsize
+        for child in self.children:
+            if child.uct1(math.sqrt(2)) > best_value:
+                best_child = child
+                best_value = child.uct1(math.sqrt(2))
+        return best_child
 
     # usual value for the exploration constant is sqrt(2)
     def uct1(self, exploration_param):

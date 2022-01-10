@@ -4,6 +4,8 @@ import pygame
 import thorpy
 from pygame.constants import FULLSCREEN, RESIZABLE
 from board import Board
+from colours import Colour
+from monte_carlo_tree_search import MonteCarloTreeSearch
 from playerturn import PlayerTurn
 
 
@@ -81,6 +83,14 @@ class GameManager:
                 
     def place_piece(self):
         placed_piece = self.board.check_mouse_position(pygame.mouse.get_pos(), self.current_colour)
+        if placed_piece:
+            self.has_passed = False
+            if self.current_colour is PlayerTurn.BLACK:
+                self.current_colour = PlayerTurn.WHITE
+            elif self.current_colour is PlayerTurn.WHITE:
+                self.current_colour = PlayerTurn.BLACK
+        monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
+        monte_carlo.get_best_move_in_time()
         if placed_piece:
             self.has_passed = False
             if self.current_colour is PlayerTurn.BLACK:

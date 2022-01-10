@@ -8,8 +8,7 @@ from playerturn import PlayerTurn
 from string import ascii_uppercase
 import copy
 from go_rules import *
-
-from Code.go_rules import GoRules
+from go_rules import GoRules
 
 
 class Text:
@@ -100,6 +99,7 @@ class Board:
             self.piece_matrix = rules.remove_captured_groups_from_board(self.piece_matrix)
         return has_placed_piece
 
+
     def set_up_numbers(self) -> None:
         starting_position = (self.board_intersections[-1][-1].x, self.board_intersections[-1][-1].y)
         x = self.board[0][0].x
@@ -137,4 +137,10 @@ class Board:
 
     def get_piece_at_position(self, row: int, col: int) -> Piece:
         return self.piece_matrix[row][col]
+
+    def get_number_of_black_pieces(self):
+        pass
+
+    def get_number_of_white_pieces(self):
+        pass
 
