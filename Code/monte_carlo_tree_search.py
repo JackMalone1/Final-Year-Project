@@ -72,10 +72,10 @@ class MonteCarloTreeSearch:
             move = choice(possible_moves)
 
             if states_copy.current_colour == PlayerTurn.BLACK:
-                states_copy.piece_matrix[move[0]][move[1]] = Colour.BLACK
+                states_copy.place_piece_at_position(PlayerTurn.BLACK, move)
                 states_copy.current_colour = PlayerTurn.WHITE
             else:
-                states_copy.piece_matrix[move[0]][move[1]] = Colour.WHITE
+                states_copy.place_piece_at_position(PlayerTurn.WHITE, move)
                 states_copy.current_colour = PlayerTurn.BLACK
         if states_copy.get_number_of_black_pieces() > states_copy.get_number_of_white_pieces():
             return 1
