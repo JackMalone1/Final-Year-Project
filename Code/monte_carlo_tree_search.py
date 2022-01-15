@@ -1,5 +1,5 @@
 import math
-from copy import copy
+from copy import copy, deepcopy
 from datetime import datetime
 from random import choice, random
 
@@ -17,6 +17,7 @@ class MonteCarloTreeSearch:
         self.states = []
         self.max_moves = 10
         self.colour = colour
+        self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
 
     def get_best_move_in_time(self):
         start_time = datetime.utcnow()
@@ -29,7 +30,8 @@ class MonteCarloTreeSearch:
         best_move = available_moves[0]
         moves = []
         if len(available_moves) > 0:
-            root = Node(None, PlayerTurn.BLACK, (-1, -1), copy(self.board))
+            root = Node(None, self.player_turn, (-1, -1), copy(self.board))
+            self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
             if root is not None:
                 for _ in range(10):
                     n = self.expansion(root)
@@ -46,7 +48,7 @@ class MonteCarloTreeSearch:
                         best_value = ucb
                 moves.append((0, best_move))
                 move = moves[0][1]
-                self.board.piece_matrix[move[0]][move[1]].colour = self.colour
+                self.board.place_piece_at_position(self.player_turn, move)
 
     def expansion(self, node: Node):
         n = copy(node)
@@ -69,12 +71,12 @@ class MonteCarloTreeSearch:
             possible_moves = rules.get_legal_spots_to_play(states_copy.piece_matrix)
             move = choice(possible_moves)
 
-            if states_copy.current_player == PlayerTurn.BLACK:
+            if states_copy.current_colour == PlayerTurn.BLACK:
                 states_copy.piece_matrix[move[0]][move[1]] = Colour.BLACK
-                states_copy.current_player = PlayerTurn.WHITE
+                states_copy.current_colour = PlayerTurn.WHITE
             else:
                 states_copy.piece_matrix[move[0]][move[1]] = Colour.WHITE
-                states_copy.current_player = PlayerTurn.BLACK
+                states_copy.current_colour = PlayerTurn.BLACK
         if states_copy.get_number_of_black_pieces() > states_copy.get_number_of_white_pieces():
             return 1
         elif states_copy.get_number_of_white_pieces() > states_copy.get_number_of_black_pieces():

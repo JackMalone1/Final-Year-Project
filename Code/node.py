@@ -27,8 +27,8 @@ class Node:
         else:
             self.board = board
         self.current_colour = Colour.WHITE if player is PlayerTurn.WHITE else Colour.BLACK
-        if self.board.piece_matrix[position[0]][position[1]].colour is Colour.CLEAR:
-            self.board.piece_matrix[position[0]][position[1]].colour = self.current_colour
+        #if self.board.piece_matrix[position[0]][position[1]].colour is Colour.CLEAR:
+            #self.board.piece_matrix[position[0]][position[1]].colour = self.current_colour
 
     def backup(self, evaluation):
         self.score += evaluation
@@ -58,6 +58,6 @@ class Node:
 
     # usual value for the exploration constant is sqrt(2)
     def uct1(self, exploration_param):
-        return (self.won_simulation / self.total_simulations) + (exploration_param *
-                                                                 np.sqrt(np.log(self.parent.total_simulations) /
-                                                                         self.total_simulations))
+        return (self.score / self.visited) + (exploration_param *
+                                                                 np.sqrt(np.log(self.parent.visited) /
+                                                                         self.visited))

@@ -129,7 +129,7 @@ class GoRules:
 
         for row in piece_matrix:
             for piece in row:
-                if piece.colour is Colour.CLEAR:
+                if piece is Colour.CLEAR:
                     free_spaces.append(piece)
         for piece in free_spaces:
             if len(self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)) > 0:
