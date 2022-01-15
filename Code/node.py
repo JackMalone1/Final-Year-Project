@@ -10,28 +10,22 @@ import numpy as np
 
 
 class Node:
-    def __init__(self):
+    def __init__(self, parent, player: PlayerTurn, position: tuple, board: Board):
         self.parent = None
         self.score = 0
         self.visited = 0
         self.children = []
         self.total_simulations = 0
         self.won_simulations = 0
-        self.position = tuple(-1, -1)
-
-    def __init__(self, board: Board, player: PlayerTurn):
-        self.__init__(self)
-        self.parent = None
-        self.possible_moves = []
-        self.board = copy.deepcopy(board)
-        self.player = player
-
-    def __init__(self, parent, player: PlayerTurn, position: tuple):
-        self.__init__(self)
+        self.position = (-1, -1)
         self.parent = parent
         self.player = player
         self.position = position
-        self.board = copy.deepcopy(parent.board)
+        self.possible_moves = []
+        if self.parent is not None:
+            self.board = copy(parent.board)
+        else:
+            self.board = board
         self.current_colour = Colour.WHITE if player is PlayerTurn.WHITE else Colour.BLACK
         if self.board.piece_matrix[position[0]][position[1]].colour is Colour.CLEAR:
             self.board.piece_matrix[position[0]][position[1]].colour = self.current_colour
@@ -51,7 +45,7 @@ class Node:
         return None
 
     def get_more_moves(self, moves):
-        [self.possible_moves.append(Node(self, Colour.WHITE, move)) for move in moves]
+        [self.possible_moves.append(Node(self, Colour.WHITE, move, None)) for move in moves]
 
     def get_best_child(self):
         best_child = None

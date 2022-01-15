@@ -21,16 +21,18 @@ class MonteCarloTreeSearch:
     def get_best_move_in_time(self):
         start_time = datetime.utcnow()
         rules = GoRules(self.board.piece_matrix, self.board.size)
-        available_moves = rules.get_legal_spots_to_play(self.board)
+        available_moves = rules.get_legal_spots_to_play(self.board.piece_matrix)
         root = None
         best_value = -math.inf
+        if available_moves is None or len(available_moves) == 0:
+            return
         best_move = available_moves[0]
         moves = []
         if len(available_moves) > 0:
-            root = Node(self.board.copy())
+            root = Node(None, PlayerTurn.BLACK, (-1, -1), copy(self.board))
             if root is not None:
                 for _ in range(10):
-                    n = self.expand(root)
+                    n = self.expansion(root)
                     n.backup(self.run_simulation(n))
                     difference = datetime.utcnow() - start_time
                     if difference.total_seconds() < self.calculation_time:
@@ -42,12 +44,13 @@ class MonteCarloTreeSearch:
                     if ucb > best_value:
                         best_move = node
                         best_value = ucb
-                moves.append((0, best_move.position))
-                self.board.piece_matrix[moves[0][0], moves[0][1]] = self.colour
+                moves.append((0, best_move))
+                move = moves[0][1]
+                self.board.piece_matrix[move[0]][move[1]].colour = self.colour
 
     def expansion(self, node: Node):
         n = copy(node)
-        rules = GoRules()
+        rules = GoRules(n.board.piece_matrix, n.board.size)
         moves = rules.get_legal_spots_to_play(n.board.piece_matrix)
 
         while len(moves) > 0:
@@ -59,8 +62,8 @@ class MonteCarloTreeSearch:
         return n
 
     def run_simulation(self, node: Node):
-        states_copy = node.board.copy()
-        rules = GoRules()
+        states_copy = copy(node.board)
+        rules = GoRules(states_copy.piece_matrix, states_copy.size)
 
         while len(rules.get_legal_spots_to_play(states_copy.piece_matrix)) > 0:
             possible_moves = rules.get_legal_spots_to_play(states_copy.piece_matrix)

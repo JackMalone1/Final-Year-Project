@@ -139,8 +139,18 @@ class Board:
         return self.piece_matrix[row][col]
 
     def get_number_of_black_pieces(self):
-        pass
+        sum = 0
+        for row in self.piece_matrix:
+            for piece in row:
+                if piece.colour == Colour.BLACK:
+                    sum += 1
+        return sum
 
     def get_number_of_white_pieces(self):
-        pass
+        sum = 0
+        for row in self.piece_matrix:
+            for piece in row:
+                if piece.colour == Colour.WHITE:
+                    sum += 1
+        return sum
 

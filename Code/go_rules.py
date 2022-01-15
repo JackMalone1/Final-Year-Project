@@ -125,10 +125,15 @@ class GoRules:
 
     def get_legal_spots_to_play(self, piece_matrix):
         possible_moves = []
-        free_spaces = [piece for piece in piece_matrix if piece.colour is Colour.CLEAR]
+        free_spaces = []
+
+        for row in piece_matrix:
+            for piece in row:
+                if piece.colour is Colour.CLEAR:
+                    free_spaces.append(piece)
         for piece in free_spaces:
             if len(self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)) > 0:
-                possible_moves.append(tuple(piece.row, piece.col))
+                possible_moves.append((piece.row, piece.col))
         return possible_moves
 
     def next_state(self, piece_matrix, position):
