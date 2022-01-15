@@ -169,3 +169,19 @@ class GoRules:
         #if the game is won, return which player won the game, otherwise return if it's still being played or
         #return if it is a tie
         pass
+
+    def get_number_of_black_pieces(self, piece_matrix):
+        sum = 0
+        for row in piece_matrix:
+            for piece in row:
+                if piece.colour == Colour.BLACK:
+                    sum += 1
+        return sum
+
+    def get_number_of_white_pieces(self, piece_matrix):
+        sum = 0
+        for row in piece_matrix:
+            for piece in row:
+                if piece.colour == Colour.WHITE:
+                    sum += 1
+        return sum

@@ -90,7 +90,7 @@ class GameManager:
             elif self.current_colour is PlayerTurn.WHITE:
                 self.current_colour = PlayerTurn.BLACK
         monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
-        monte_carlo.get_best_move_in_time()
+        monte_carlo.get_best_move_in_time(self.board)
         print("Placed piece")
         if placed_piece:
             self.has_passed = False
