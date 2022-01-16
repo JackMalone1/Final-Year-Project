@@ -7,6 +7,7 @@ from board import Board
 from colours import Colour
 from monte_carlo_tree_search import MonteCarloTreeSearch
 from playerturn import PlayerTurn
+from minimax import *
 
 
 class GameManager:
@@ -89,8 +90,13 @@ class GameManager:
                 self.current_colour = PlayerTurn.WHITE
             elif self.current_colour is PlayerTurn.WHITE:
                 self.current_colour = PlayerTurn.BLACK
-        monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
-        monte_carlo.get_best_move_in_time(self.board)
+        #monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
+        #monte_carlo.get_best_move_in_time(self.board)
+        minimax = MiniMax(3)
+        alpha = -100000
+        beta = 100000
+        minimax.do_move_in_time(alpha, beta, state=self.board, depth=0, move=None, is_minimiser=False,
+                                player_colour=Colour.WHITE)
         print("Placed piece")
         if placed_piece:
             self.has_passed = False

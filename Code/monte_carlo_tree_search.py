@@ -22,7 +22,7 @@ class MonteCarloTreeSearch:
         self.start_time = datetime.utcnow()
 
     def get_best_move_in_time(self, board):
-        self.start_time = datetime.utcnow()
+        #self.start_time = datetime.utcnow()
         rules = GoRules(self.board.piece_matrix, self.board.size)
         available_moves = rules.get_legal_spots_to_play(self.board.piece_matrix)
         root = None

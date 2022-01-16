@@ -38,7 +38,6 @@ class Board:
         self.current_colour = PlayerTurn.BLACK
         self.rules = GoRules(self.piece_matrix, self.size)
 
-
     def render(self, screen: pygame.display) -> None:
         screen.blit(self.background, self.background_rect)
         [[pygame.draw.rect(screen, pygame.Color(0, 0, 0), col, 3) for col in row] for row in self.board]
