@@ -25,7 +25,7 @@ class GameManager:
         self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
         self.running = True
         background = pygame.image.load("Assets//background.jpg")
-        self.board = Board(background=background, size=19, font_path="MONOFONT.ttf",
+        self.board = Board(background=background, size=9, font_path="MONOFONT.ttf",
                            piece_sound_effect_path="Assets//Sounds//place_piece.ogg")
         self.clock = pygame.time.Clock()
         self.current_colour = PlayerTurn.BLACK
@@ -90,13 +90,15 @@ class GameManager:
                 self.current_colour = PlayerTurn.WHITE
             elif self.current_colour is PlayerTurn.WHITE:
                 self.current_colour = PlayerTurn.BLACK
-        #monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
-        #monte_carlo.get_best_move_in_time(self.board)
-        minimax = MiniMax(3)
-        alpha = -100000
-        beta = 100000
-        minimax.do_move_in_time(alpha, beta, state=self.board, depth=0, move=None, is_minimiser=False,
-                                player_colour=Colour.WHITE)
+            monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
+            position = monte_carlo.get_best_move_in_time(self.board)
+            print(position)
+            self.board.place_piece_at_position(PlayerTurn.WHITE, position)
+        #minimax = MiniMax(3)
+        #alpha = -100000
+        #beta = 100000
+        #minimax.do_move_in_time(alpha, beta, state=self.board, depth=0, move=None, is_minimiser=False,
+                                #player_colour=Colour.WHITE)
         print("Placed piece")
         if placed_piece:
             self.has_passed = False

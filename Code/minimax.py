@@ -19,7 +19,7 @@ class MiniMax:
 
     def do_move_in_time(self, alpha, beta, state: Board, depth, move, is_minimiser, player_colour) -> Move:
         if depth == self.MAX_DEPTH:
-            return self.evaluate(state, move)
+            return self.evaluate(state, move, depth)
         rules = GoRules(state.piece_matrix, state.size)
         available_moves = rules.get_legal_spots_to_play(state.piece_matrix)
         for move in available_moves:
@@ -78,6 +78,9 @@ class MiniMax:
                     best_depth = m.depth
         return best_move
 
-    def evaluate(self, state, move):
-        move.score = 1
-        return move
+    def evaluate(self, state, move, depth):
+        evaluated_move = Move()
+        evaluated_move.depth = depth
+        evaluated_move.position = move
+        evaluated_move.score = 1
+        return evaluated_move

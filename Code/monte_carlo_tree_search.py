@@ -12,7 +12,7 @@ from playerturn import PlayerTurn
 
 class MonteCarloTreeSearch:
     def __init__(self, board: Board, colour: Colour):
-        self.calculation_time = 1
+        self.calculation_time = 5
         self.board = board
         self.board.piece_matrix = deepcopy(board.piece_matrix)
         self.states = []
@@ -20,27 +20,28 @@ class MonteCarloTreeSearch:
         self.colour = colour
         self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
         self.start_time = datetime.utcnow()
+        self.exploration = 8
 
     def get_best_move_in_time(self, board):
         #self.start_time = datetime.utcnow()
         rules = GoRules(self.board.piece_matrix, self.board.size)
         available_moves = rules.get_legal_spots_to_play(self.board.piece_matrix)
-        root = None
         best_value = -math.inf
-        if available_moves is None or len(available_moves) == 0:
-            return
+        best_move = choice(available_moves)
         best_move = available_moves[0]
         moves = []
         if len(available_moves) > 0:
             root = Node(None, self.player_turn, (-1, -1), copy(self.board))
             self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
             if root is not None:
-                for _ in range(10):
+                for _ in range(self.exploration):
+                    difference = datetime.utcnow() - self.start_time
+                    if difference.total_seconds()\
+                        >= self.calculation_time:
+                        break
                     n = self.expansion(root)
                     n.backup(self.run_simulation(n))
-                    difference = datetime.utcnow() - self.start_time
-                    if difference.total_seconds() < self.calculation_time:
-                        break  # we've used all of our time so find whatever the best move was and return
+                    print("Iteration: " + str(_))
                 for node in n.children:
                     if node.visited == 0:
                         continue
@@ -48,28 +49,30 @@ class MonteCarloTreeSearch:
                     if ucb > best_value:
                         best_move = node
                         best_value = ucb
+                    print("Ucb")
                 moves.append((0, best_move))
                 move = moves[0][1]
-                board.place_piece_at_position(self.player_turn, move)
+                #board.place_piece_at_position(self.player_turn, move)
+        return best_move
 
     def expansion(self, node: Node):
-        n = copy(node)
-        rules = GoRules(n.board.piece_matrix, n.board.size)
-        moves = rules.get_legal_spots_to_play(n.board.piece_matrix)
-
+        rules = GoRules(node.board.piece_matrix, node.board.size)
+        moves = rules.get_legal_spots_to_play(node.board.piece_matrix)
         while len(moves) > 0:
-            n.get_more_moves(rules.get_legal_spots_to_play(n.board.piece_matrix))
-            if len(n.possible_moves) > 0:
-                return n.expand_node()
+            node.get_more_moves(rules.get_legal_spots_to_play(node.board.piece_matrix))
+            if len(node.possible_moves) > 0:
+                n = node.expand_node()
+                return n
             else:
-                n = n.get_best_child()
+                n = node.get_best_child()
         return n
 
     def run_simulation(self, node: Node):
-        states_copy = copy(node.board)
+        states_copy = node.board
         rules = GoRules(states_copy.piece_matrix, states_copy.size)
         difference = datetime.utcnow() - self.start_time
-        while len(rules.get_legal_spots_to_play(states_copy.piece_matrix)) > 0 and difference.total_seconds() < self.calculation_time:
+        while len(rules.get_legal_spots_to_play(states_copy.piece_matrix)) > 0 and difference.total_seconds()\
+                < self.calculation_time:
             possible_moves = rules.get_legal_spots_to_play(states_copy.piece_matrix)
             move = choice(possible_moves)
 
