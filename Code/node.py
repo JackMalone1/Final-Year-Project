@@ -1,6 +1,6 @@
 import math
 import sys
-from random import choice
+from random import choice, random, randrange
 
 from board import Board
 from colours import Colour
@@ -23,7 +23,7 @@ class Node:
         self.position = position
         self.possible_moves = []
         if self.parent is not None:
-            self.board = copy(parent.board)
+            self.board = parent.board
             self.board.piece_matrix = deepcopy(parent.board.piece_matrix)
         else:
             self.board = board
@@ -41,7 +41,9 @@ class Node:
 
     def expand_node(self):
         if len(self.possible_moves) > 0:
-            node = choice(self.possible_moves)
+            index = randrange(0, len(self.possible_moves))
+            node = self.possible_moves[index]
+            self.possible_moves.pop(index)
             self.children.append(node)
             return node
         return None
