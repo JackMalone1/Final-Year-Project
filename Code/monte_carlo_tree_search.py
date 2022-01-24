@@ -63,10 +63,10 @@ class MonteCarloTreeSearch:
         while len(moves) > 0:
             n.get_more_moves(rules.get_legal_spots_to_play(n.board.piece_matrix))
             if len(node.possible_moves) > 0:
-                n = node.expand_node()
+                n = n.expand_node()
                 return n
             else:
-                n = node.get_best_child()
+                n = n.get_best_child()
         return n
 
     def run_simulation(self, node: Node):
