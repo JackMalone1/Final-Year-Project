@@ -92,7 +92,6 @@ class Board:
                 has_placed_piece = True
                 self.remove_ko(Colour.WHITE, position)
         if has_placed_piece:
-            print("has placed piece")
             rules = GoRules(self.piece_matrix, self.size)
             rules.opposite_colour = Colour.BLACK if current_colour is PlayerTurn.WHITE else Colour.WHITE
             self.piece_matrix = rules.remove_captured_groups_from_board(self.piece_matrix)

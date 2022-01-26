@@ -65,7 +65,7 @@ class GameManager:
     def run(self):
         while self.running:
             self.time_delta = self.clock.tick(60) / 1000.0
-            self.update()
+            #self.update()
             self.process_events()
             self.render()
 
@@ -89,8 +89,8 @@ class GameManager:
             elif event.type == pygame.VIDEORESIZE:
                 self.resize_window(event)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.game_running:
-                pass
-                #self.place_piece()
+                self.place_piece()
+
 
             if self.game_running:
                 self.menu.react(event)
@@ -106,7 +106,7 @@ class GameManager:
             elif self.current_colour is PlayerTurn.WHITE:
                 self.current_colour = PlayerTurn.BLACK
             monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
-            position = monte_carlo.get_best_move_in_time(self.board)
+            position = monte_carlo.get_best_move_in_time(self.board).position
             print(position)
             self.board.place_piece_at_position(PlayerTurn.WHITE, position)
         #minimax = MiniMax(3)
