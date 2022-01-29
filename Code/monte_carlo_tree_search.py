@@ -20,7 +20,7 @@ class MonteCarloTreeSearch:
         self.colour = colour
         self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
         self.start_time = datetime.utcnow()
-        self.exploration = 5
+        self.exploration = 10
 
     def get_best_move_in_time(self, board):
         rules = GoRules(copy(self.board.piece_matrix), self.board.size)
@@ -38,8 +38,9 @@ class MonteCarloTreeSearch:
                     #if difference.total_seconds()\
                         #>= self.calculation_time:
                         #break
-                    n = self.expansion(root)
-                    n.children = self.expansion(root).children
+                    n = self.expansion(copy(root))
+                    root.children.extend(n.children)
+                    #n.children = self.expansion(root).children
                     n.backup(self.run_simulation(n))
                 print(len(root.children))
                 for node in root.children:
@@ -59,17 +60,21 @@ class MonteCarloTreeSearch:
         rules = GoRules(node.board.piece_matrix, node.board.size)
         moves = rules.get_legal_spots_to_play(node.board.piece_matrix)
         #n.children = node.children
+        original_board = node.board.piece_matrix
         node.board.piece_matrix = deepcopy(node.board.piece_matrix)
         while len(moves) > 0:
             node.get_more_moves(rules.get_legal_spots_to_play(node.board.piece_matrix))
             if len(node.possible_moves) > 0:
+                node.board.piece_matrix = original_board
                 return node.expand_node()
             else:
                 node = node.get_best_child()
+        node.board.piece_matrix = original_board
         return node
 
     def run_simulation(self, node: Node):
         states_copy = copy(node.board)
+        states_copy.piece_matrix = copy(node.board.piece_matrix)
         rules = GoRules(states_copy.piece_matrix, states_copy.size)
         difference = datetime.utcnow() - self.start_time
         while len(rules.get_legal_spots_to_play(states_copy.piece_matrix)) > 0: #and difference.total_seconds()\

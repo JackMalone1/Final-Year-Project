@@ -65,7 +65,7 @@ class GameManager:
     def run(self):
         while self.running:
             self.time_delta = self.clock.tick(60) / 1000.0
-            #self.update()
+            self.update()
             self.process_events()
             self.render()
 
@@ -89,7 +89,8 @@ class GameManager:
             elif event.type == pygame.VIDEORESIZE:
                 self.resize_window(event)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.game_running:
-                self.place_piece()
+                pass
+                #self.place_piece()
 
 
             if self.game_running:

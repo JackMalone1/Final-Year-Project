@@ -45,6 +45,7 @@ class Node:
             node = self.possible_moves[index]
             self.possible_moves.pop(index)
             self.children.append(node)
+            print("add child")
             return node
         return None
 
@@ -65,3 +66,11 @@ class Node:
         return (self.score / self.visited) + (exploration_param *
                                                                  np.sqrt(np.log(self.parent.visited) /
                                                                          self.visited))
+
+    def as_copy(self, other_node):
+        self.score = other_node.score
+        self.visited = other_node.visited
+        self.parent = other_node.parent
+        self.children = deepcopy(other_node.children)
+        self.possible_moves = deepcopy(other_node.possible_moves)
+        self.position = other_node.position
