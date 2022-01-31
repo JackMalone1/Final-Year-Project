@@ -1,6 +1,6 @@
 import math
 from copy import copy, deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import choice, random
 
 from board import Board
@@ -35,10 +35,13 @@ class MonteCarloTreeSearch:
             root = Node(None, self.player_turn, choice(available_moves), copy(board.piece_matrix))
             self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
             if root is not None:
+                difference = datetime.utcnow() - self.start_time
                 for _ in range(self.exploration):
-                    n = self.expansion(copy(root))
-                    root.children.extend(n.children)
-                    n.backup(self.run_simulation(n))
+                    if difference < timedelta(seconds=5):
+                        n = self.expansion(copy(root))
+                        root.children.extend(n.children)
+                        n.backup(self.run_simulation(n))
+                        difference = datetime.utcnow() - self.start_time
                 print(len(root.children))
                 for node in root.children:
                     if node.visited == 0:
@@ -49,13 +52,11 @@ class MonteCarloTreeSearch:
                         best_value = ucb
                 moves.append((0, best_move.position))
                 move = moves[0][1]
-                #board.place_piece_at_position(self.player_turn, move)
         return best_move
 
     def expansion(self, node: Node):
         rules = GoRules(node.board, self.size)
         moves = rules.get_legal_spots_to_play(node.board)
-        #n.children = node.children
         original_board = node.board
         node.board = deepcopy(node.board)
         while len(moves) > 0:
@@ -69,25 +70,17 @@ class MonteCarloTreeSearch:
         return node
 
     def run_simulation(self, node: Node):
-        states_copy = copy(node.board)
-        #states_copy.piece_matrix = copy(node.board.piece_matrix)
+        states_copy = deepcopy(node.board)
         rules = GoRules(states_copy, self.size)
-        difference = datetime.utcnow() - self.start_time
-        current_colour = PlayerTurn.BLACK
-        while len(rules.get_legal_spots_to_play(states_copy)) > 0: #and difference.total_seconds()\
-                #< self.calculation_time:
+        while len(rules.get_legal_spots_to_play(states_copy)) > 0:
             possible_moves = rules.get_legal_spots_to_play(states_copy)
             move = choice(possible_moves)
-
             if self.current_colour == PlayerTurn.BLACK:
-                #states_copy.place_piece_at_position(PlayerTurn.BLACK, move)
                 states_copy[move[0]][move[1]].colour = Colour.BLACK
                 self.current_colour = PlayerTurn.WHITE
             else:
-                #states_copy.place_piece_at_position(PlayerTurn.WHITE, move)
                 states_copy[move[0]][move[1]].colour = Colour.WHITE
                 self.current_colour = PlayerTurn.BLACK
-            difference = datetime.utcnow() - self.start_time
         if rules.get_number_of_black_pieces(states_copy) > rules.get_number_of_white_pieces(states_copy):
             return 1
         elif rules.get_number_of_white_pieces(states_copy) > rules.get_number_of_black_pieces(states_copy):
