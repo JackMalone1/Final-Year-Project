@@ -24,10 +24,8 @@ class Node:
         self.possible_moves = []
         if self.parent is not None:
             self.board = parent.board
-            self.board.piece_matrix = deepcopy(parent.board.piece_matrix)
         else:
             self.board = board
-            self.board.piece_matrix = deepcopy(board.piece_matrix)
         self.current_colour = Colour.WHITE if player is PlayerTurn.WHITE else Colour.BLACK
         #if self.board.piece_matrix[position[0]][position[1]].colour is Colour.CLEAR:
             #self.board.piece_matrix[position[0]][position[1]].colour = self.current_colour

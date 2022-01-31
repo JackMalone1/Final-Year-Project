@@ -25,7 +25,7 @@ class GameManager:
         self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
         self.running = True
         background = pygame.image.load("Assets//background.jpg")
-        self.board = Board(background=background, size=13, font_path="MONOFONT.ttf",
+        self.board = Board(background=background, size=5, font_path="MONOFONT.ttf",
                            piece_sound_effect_path="Assets//Sounds//place_piece.ogg")
         self.clock = pygame.time.Clock()
         self.current_colour = PlayerTurn.BLACK
@@ -91,8 +91,6 @@ class GameManager:
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.game_running:
                 pass
                 #self.place_piece()
-
-
             if self.game_running:
                 self.menu.react(event)
             elif not self.game_over:
