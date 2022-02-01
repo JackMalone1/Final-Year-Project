@@ -6,6 +6,7 @@ from pygame.constants import FULLSCREEN, RESIZABLE
 from board import Board
 from colours import Colour
 from monte_carlo_tree_search import MonteCarloTreeSearch
+from player_type import PlayerType
 from playerturn import PlayerTurn
 from minimax import *
 
@@ -25,7 +26,7 @@ class GameManager:
         self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
         self.running = True
         background = pygame.image.load("Assets//background.jpg")
-        self.board = Board(background=background, size=19, font_path="MONOFONT.ttf",
+        self.board = Board(background=background, size=13, font_path="MONOFONT.ttf",
                            piece_sound_effect_path="Assets//Sounds//place_piece.ogg")
         self.clock = pygame.time.Clock()
         self.current_colour = PlayerTurn.BLACK
@@ -47,6 +48,9 @@ class GameManager:
     def start_game(self):
         self.game_running = True
 
+    def test_function(self):
+        print("Hello world")
+
     def init_ui(self):
         self.button = thorpy.make_button("Quit", func=thorpy.functions.quit_func)
         self.pass_button = thorpy.make_button("Pass", func=self.pass_func)
@@ -59,8 +63,11 @@ class GameManager:
         # use the elements normally...
 
         self.play_game = thorpy.make_button("Play Game", func=self.start_game)
+        varset = thorpy.VarSet()
+        varset.add("Player 1", value=-1, text="Player1:", limits=(-1, 1))
+        self.options = thorpy.ParamSetterLauncher.make([varset], "Options", "Options")
         self.main_menu_box = thorpy.Box(elements=[self.play_game])
-        self.main_menu = thorpy.Menu(self.main_menu_box)
+        self.main_menu = thorpy.Menu(self.main_menu_box, self.options)
 
     def run(self):
         while self.running:
@@ -80,7 +87,6 @@ class GameManager:
                 print(position)
                 self.board.place_piece_at_position(self.current_colour, position.position)
                 self.current_colour = PlayerTurn.WHITE if self.current_colour is PlayerTurn.BLACK else PlayerTurn.BLACK
-
 
     def process_events(self):
         for event in pygame.event.get():

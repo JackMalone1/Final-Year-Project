@@ -184,3 +184,23 @@ class GoRules:
                 if piece.colour == Colour.WHITE:
                     sum += 1
         return sum
+
+    def get_territory_for_black(self, piece_matrix):
+        sum = 0
+        for row in piece_matrix:
+            for piece in row:
+                if piece.colour == Colour.CLEAR:
+                    liberties = self.get_adjacent_of_colour(piece.row, piece.col, Colour.BLACK)
+                    if len(liberties) > 2:
+                        sum += 1
+        return sum
+
+    def get_territory_for_white(self, piece_matrix):
+        sum = 0
+        for row in piece_matrix:
+            for piece in row:
+                if piece.colour == Colour.CLEAR:
+                    liberties = self.get_adjacent_of_colour(piece.row, piece.col,Colour.WHITE)
+                    if len(liberties) > 2:
+                        sum += 1
+        return sum

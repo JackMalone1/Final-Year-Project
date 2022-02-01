@@ -20,7 +20,9 @@ class MonteCarloTreeSearch:
         self.colour = colour
         self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
         self.start_time = datetime.utcnow()
-        self.exploration = 50
+        self.exploration = 320
+        self.size = 0
+        self.current_colour = PlayerTurn.BLACK
 
     def get_best_move_in_time(self, board):
         rules = GoRules(copy(board.piece_matrix), board.size)
@@ -81,9 +83,12 @@ class MonteCarloTreeSearch:
             else:
                 states_copy[move[0]][move[1]].colour = Colour.WHITE
                 self.current_colour = PlayerTurn.BLACK
-        if rules.get_number_of_black_pieces(states_copy) > rules.get_number_of_white_pieces(states_copy):
+
+        black_sum = rules.get_number_of_black_pieces(states_copy) + rules.get_territory_for_black(states_copy)
+        white_sum = rules.get_number_of_white_pieces(states_copy) + rules.get_territory_for_white(states_copy)
+        if black_sum > white_sum:
             return 1
-        elif rules.get_number_of_white_pieces(states_copy) > rules.get_number_of_black_pieces(states_copy):
+        elif white_sum > black_sum:
             return -1
         else:
             return 0
