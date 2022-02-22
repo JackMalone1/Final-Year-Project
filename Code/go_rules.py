@@ -184,6 +184,9 @@ class GoRules:
                 if piece.colour == Colour.WHITE:
                     sum += 1
         return sum
+    
+    def score(self, piece_matrix):
+        return self.get_number_of_black_pieces(piece_matrix) - self.get_number_of_white_pieces(piece_matrix)
 
     def get_territory_for_black(self, piece_matrix):
         sum = 0

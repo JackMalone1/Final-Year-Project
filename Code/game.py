@@ -11,6 +11,10 @@ from playerturn import PlayerTurn
 from minimax import *
 
 
+def react_func(event):
+    print("Hello")
+
+
 class GameManager:
     def __init__(self):
         self.init()
@@ -26,7 +30,7 @@ class GameManager:
         self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
         self.running = True
         background = pygame.image.load("Assets//background.jpg")
-        self.board = Board(background=background, size=13, font_path="MONOFONT.ttf",
+        self.board = Board(background=background, size=5, font_path="MONOFONT.ttf",
                            piece_sound_effect_path="Assets//Sounds//place_piece.ogg")
         self.clock = pygame.time.Clock()
         self.current_colour = PlayerTurn.BLACK
@@ -47,8 +51,15 @@ class GameManager:
 
     def start_game(self):
         self.game_running = True
+        selected = self.radio_pool.get_selected()
+        if selected == self.player_button:
+            self.player_player1
+        elif selected == self.minimax_button:
+            self.minimax_player1
+        elif selected == self.alpha_beta_button:
+            self.alpha_beta_player1
 
-    def test_function(self):
+    def test_function(self, event):
         print("Hello world")
 
     def init_ui(self):
@@ -63,11 +74,20 @@ class GameManager:
         # use the elements normally...
 
         self.play_game = thorpy.make_button("Play Game", func=self.start_game)
-        varset = thorpy.VarSet()
-        varset.add("Player 1", value=-1, text="Player1:", limits=(-1, 1))
-        self.options = thorpy.ParamSetterLauncher.make([varset], "Options", "Options")
-        self.main_menu_box = thorpy.Box(elements=[self.play_game])
-        self.main_menu = thorpy.Menu(self.main_menu_box, self.options)
+        self.player_button = thorpy.Checker("Player", type_="radio")
+        self.minimax_button = thorpy.Checker("Mini Max", type_="radio")
+        self.alpha_beta_button = thorpy.Checker("Alpha Beta", type_="radio")
+        self.player_player1 = False
+        self.minimax_player1 = False
+        self.alpha_beta_player1 = False
+        self.radio_pool = thorpy.RadioPool([self.player_button, self.minimax_button, self.alpha_beta_button],
+                                      first_value=self.player_button)
+        self.text = thorpy.Element(text="Player 1")
+        self.player2 = thorpy.Element(text="Player 2")
+        self.main_menu_box = thorpy.Box(elements=[self.play_game, self.text, self.player_button, self.minimax_button,
+                                                  self.alpha_beta_button, self.player2])
+        self.main_menu = thorpy.Menu(self.main_menu_box)
+
 
     def run(self):
         while self.running:
@@ -83,7 +103,11 @@ class GameManager:
             colour = Colour.BLACK if self.current_colour == PlayerTurn.BLACK else Colour.WHITE
             if len(moves) > 0:
                 monte_carlo = MonteCarloTreeSearch(self.board, colour)
+                alpha_beta = MiniMax(5, self.board.size)
                 position = monte_carlo.get_best_move_in_time(self.board)
+                is_maximiser = True if self.current_colour is PlayerTurn.BLACK else False
+                if is_maximiser:
+                    position = alpha_beta.get_best_move_in_time(self.board.piece_matrix, is_maximiser=is_maximiser)
                 print(position)
                 self.board.place_piece_at_position(self.current_colour, position.position)
                 self.current_colour = PlayerTurn.WHITE if self.current_colour is PlayerTurn.BLACK else PlayerTurn.BLACK
@@ -145,5 +169,6 @@ class GameManager:
             self.main_menu_box.set_topleft((self.width / 2, self.height / 2))
             self.main_menu_box.blit()
             self.main_menu_box.update()
+
 
         pygame.display.flip()
