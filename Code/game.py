@@ -104,11 +104,15 @@ class GameManager:
             if len(moves) > 0:
                 monte_carlo = MonteCarloTreeSearch(self.board, colour)
                 alpha_beta = MiniMax(5, self.board.size)
-                position = monte_carlo.get_best_move_in_time(self.board)
+
                 is_maximiser = True if self.current_colour is PlayerTurn.BLACK else False
-                if is_maximiser:
-                    position = alpha_beta.get_best_move_in_time(self.board.piece_matrix, is_maximiser=is_maximiser)
+                if not is_maximiser:
+                    position = alpha_beta.get_best_move_in_time(deepcopy(self.board.piece_matrix),
+                                                                is_maximiser=is_maximiser)
+                else:
+                    position = monte_carlo.get_best_move_in_time(self.board)
                 print(position)
+
                 self.board.place_piece_at_position(self.current_colour, position.position)
                 self.current_colour = PlayerTurn.WHITE if self.current_colour is PlayerTurn.BLACK else PlayerTurn.BLACK
 
@@ -134,10 +138,10 @@ class GameManager:
                 self.current_colour = PlayerTurn.WHITE
             elif self.current_colour is PlayerTurn.WHITE:
                 self.current_colour = PlayerTurn.BLACK
-            monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
-            position = monte_carlo.get_best_move_in_time(self.board).position
-            print(position)
-            self.board.place_piece_at_position(PlayerTurn.WHITE, position)
+            # monte_carlo = MonteCarloTreeSearch(self.board, Colour.WHITE)
+            # position = monte_carlo.get_best_move_in_time(self.board).position
+            # print(position)
+            # self.board.place_piece_at_position(PlayerTurn.WHITE, position)
         #minimax = MiniMax(3)
         #alpha = -100000
         #beta = 100000
