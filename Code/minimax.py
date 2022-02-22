@@ -45,6 +45,7 @@ class MiniMax:
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
+            return leaf
 
         move = Move()
         move.position = (0, 0)
@@ -73,6 +74,7 @@ class MiniMax:
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
+            return leaf
 
         move = Move()
         move.position = (0, 0)
@@ -82,7 +84,7 @@ class MiniMax:
             if self.is_time_limit_reached():
                 return move
             board_copy = deepcopy(state)
-            board_copy[possible_move[0]][possible_move[1]].colour = Colour.WHITE
+            board_copy[possible_move[0]][possible_move[1]].colour = Colour.BLACK
             score = self.minimiser(board_copy, alpha, beta, depth + 1).score
             if score >= beta:
                 move.score = beta

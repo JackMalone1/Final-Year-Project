@@ -103,7 +103,7 @@ class GameManager:
             colour = Colour.BLACK if self.current_colour == PlayerTurn.BLACK else Colour.WHITE
             if len(moves) > 0:
                 monte_carlo = MonteCarloTreeSearch(self.board, colour)
-                alpha_beta = MiniMax(5, self.board.size)
+                alpha_beta = MiniMax(3, self.board.size)
 
                 is_maximiser = True if self.current_colour is PlayerTurn.BLACK else False
                 if not is_maximiser:
