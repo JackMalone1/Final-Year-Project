@@ -22,6 +22,7 @@ class MiniMax:
         self.max_value = 100_000_000
 
     def get_best_move_in_time(self, state, is_maximiser: bool) -> Move:
+        self.start_time = datetime.utcnow()
         rules = GoRules(copy(state), self.size)
         possible_moves = rules.get_legal_spots_to_play(copy(state))
 
@@ -30,21 +31,30 @@ class MiniMax:
             played_move.position = (0, 0)
 
             if is_maximiser:
-                played_move.position = self.maximiser(state, self.min_value, self.max_value, 0).position
+                played_move.position = self.maximiser(
+                    state, self.min_value, self.max_value, 0
+                ).position
             else:
-                played_move.position = self.minimiser(state, self.min_value, self.max_value, 0).position
+                played_move.position = self.minimiser(
+                    state, self.min_value, self.max_value, 0
+                ).position
             print("finished")
             return played_move
         else:
             return None
 
-    def minimiser(self, state: Board, alpha: int, beta: int, depth: int) -> Move:
+    def minimiser(
+        self, state: Board, alpha: int, beta: int, depth: int
+    ) -> Move:
         rules = GoRules(state, self.size)
         possible_moves = rules.get_legal_spots_to_play(state)
-        if depth == self.MAX_DEPTH or len(possible_moves) == 0 or self.is_time_limit_reached():
+        length = len(possible_moves)
+        if depth == self.MAX_DEPTH or len(possible_moves) == 0:
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
+            if leaf.score != 0:
+                print("Non 0 score: " + str(leaf.score))
             return leaf
 
         move = Move()
@@ -55,13 +65,14 @@ class MiniMax:
 
             board_copy = deepcopy(state)
             board_copy[possible_move[0]][possible_move[1]].colour = Colour.WHITE
-            if self.is_time_limit_reached():
-                possible_score = rules.score(state)
-                if possible_score <= alpha:
-                    move.score = possible_score
-                    move.position = possible_move
-                    return move
-                return move
+            # if self.is_time_limit_reached():
+            #     print("Time limit reached")
+            #     possible_score = rules.score(board_copy)
+            #     if possible_score <= alpha:
+            #         move.score = possible_score
+            #         move.position = possible_move
+            #         return move
+            #     return move
             score = self.maximiser(board_copy, alpha, beta, depth + 1).score
             if score <= alpha:
                 move.score = score
@@ -73,13 +84,17 @@ class MiniMax:
         move.score = beta
         return move
 
-    def maximiser(self, state: Board, alpha: int, beta: int, depth: int) -> Move:
+    def maximiser(
+        self, state: Board, alpha: int, beta: int, depth: int
+    ) -> Move:
         rules = GoRules(state, self.size)
         possible_moves = rules.get_legal_spots_to_play(state)
-        if depth == self.MAX_DEPTH or len(possible_moves) == 0 or self.is_time_limit_reached():
+        if depth == self.MAX_DEPTH or len(possible_moves) == 0:
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
+            if leaf.score != 0:
+                print("Non 0 score: " + str(leaf.score))
             return leaf
 
         move = Move()
@@ -89,13 +104,14 @@ class MiniMax:
         for possible_move in possible_moves:
             board_copy = deepcopy(state)
             board_copy[possible_move[0]][possible_move[1]].colour = Colour.BLACK
-            if self.is_time_limit_reached():
-                possible_score = rules.score(state)
-                if possible_score >= beta:
-                    move.score = possible_score
-                    move.position = possible_move
-                    return move
-                return move
+            # if self.is_time_limit_reached():
+            #     print("Time limit reached")
+            #     possible_score = rules.score(board_copy)
+            #     if possible_score >= beta:
+            #         move.score = possible_score
+            #         move.position = possible_move
+            #         return move
+            #     return move
             score = self.minimiser(board_copy, alpha, beta, depth + 1).score
             if score >= beta:
                 move.score = beta
@@ -109,5 +125,6 @@ class MiniMax:
         return move
 
     def is_time_limit_reached(self):
-        difference = datetime.utcnow() - self.start_time
-        return difference >= timedelta(seconds=5)
+        current_time = datetime.utcnow()
+        difference = current_time - self.start_time
+        return difference >= timedelta(seconds=30)

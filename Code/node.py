@@ -10,7 +10,9 @@ import numpy as np
 
 
 class Node:
-    def __init__(self, parent, player: PlayerTurn, position: tuple, board: Board):
+    def __init__(
+        self, parent, player: PlayerTurn, position: tuple, board: Board
+    ):
         self.parent = None
         self.score = 0
         self.visited = 0
@@ -26,14 +28,16 @@ class Node:
             self.board = parent.board
         else:
             self.board = board
-        self.current_colour = Colour.WHITE if player is PlayerTurn.WHITE else Colour.BLACK
-        #if self.board.piece_matrix[position[0]][position[1]].colour is Colour.CLEAR:
-            #self.board.piece_matrix[position[0]][position[1]].colour = self.current_colour
+        self.current_colour = (
+            Colour.WHITE if player is PlayerTurn.WHITE else Colour.BLACK
+        )
+        # if self.board.piece_matrix[position[0]][position[1]].colour is Colour.CLEAR:
+        # self.board.piece_matrix[position[0]][position[1]].colour = self.current_colour
 
     def backup(self, evaluation):
         self.score += evaluation
         self.visited += 1
-        
+
         if self.parent is not None:
             self.parent.backup(evaluation)
 
@@ -43,12 +47,14 @@ class Node:
             node = self.possible_moves[index]
             self.possible_moves.pop(index)
             self.children.append(node)
-            print("add child")
             return node
         return None
 
     def get_more_moves(self, moves):
-        [self.possible_moves.append(Node(self, Colour.WHITE, move, None)) for move in moves]
+        [
+            self.possible_moves.append(Node(self, Colour.WHITE, move, None))
+            for move in moves
+        ]
 
     def get_best_child(self):
         best_child = None
@@ -61,9 +67,10 @@ class Node:
 
     # usual value for the exploration constant is sqrt(2)
     def uct1(self, exploration_param):
-        return (self.score / self.visited) + (exploration_param *
-                                                                 np.sqrt(np.log(self.parent.visited) /
-                                                                         self.visited))
+        return (self.score / self.visited) + (
+            exploration_param
+            * np.sqrt(np.log(self.parent.visited) / self.visited)
+        )
 
     def as_copy(self, other_node):
         self.score = other_node.score

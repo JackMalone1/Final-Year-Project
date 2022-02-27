@@ -22,10 +22,14 @@ class Piece:
         self.col = col
 
     def __eq__(self, other):
-        return self.row == other.row and self.col == other.col and self.colour == other.colour
+        return (
+            self.row == other.row
+            and self.col == other.col
+            and self.colour == other.colour
+        )
 
     def __hash__(self):
-        return hash(('row', self.row, 'col', self.col, 'colour', self.colour))
+        return hash(("row", self.row, "col", self.col, "colour", self.colour))
 
     def render(self, surface: pygame.Surface):
         if self.colour != Colour.CLEAR and self.colour != Colour.Ko:
@@ -49,4 +53,3 @@ class Piece:
 
     def set_colour(self, colour: Colour):
         self.colour = colour
-

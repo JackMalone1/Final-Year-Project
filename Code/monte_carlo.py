@@ -7,11 +7,11 @@ from go_rules import GoRules
 
 class MonteCarlo(object):
     def __init__(self, board, **kwargs):
-        seconds = kwargs.get('time', 30)
+        seconds = kwargs.get("time", 30)
         self.calculation_time = datetime.timedelta(seconds=seconds)
         self.board = board
         self.states = []
-        self.max_moves = kwargs.get('max_moves', 100)
+        self.max_moves = kwargs.get("max_moves", 100)
         self.wins = {}
         self.plays = {}
 

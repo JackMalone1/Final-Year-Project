@@ -18,7 +18,11 @@ class MonteCarloTreeSearch:
         self.states = []
         self.max_moves = 10
         self.colour = colour
-        self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
+        self.player_turn = (
+            PlayerTurn.WHITE
+            if self.colour == Colour.WHITE
+            else PlayerTurn.BLACK
+        )
         self.start_time = datetime.utcnow()
         self.exploration = 320
         self.size = 0
@@ -27,15 +31,31 @@ class MonteCarloTreeSearch:
     def get_best_move_in_time(self, board):
         rules = GoRules(copy(board.piece_matrix), board.size)
         self.size = board.size
-        available_moves = rules.get_legal_spots_to_play(copy(board.piece_matrix))
+        available_moves = rules.get_legal_spots_to_play(
+            copy(board.piece_matrix)
+        )
         best_value = -math.inf
-        best_move = Node(None, self.player_turn, choice(available_moves), copy(board.piece_matrix))
+        best_move = Node(
+            None,
+            self.player_turn,
+            choice(available_moves),
+            copy(board.piece_matrix),
+        )
         moves = []
         self.current_colour = board.current_colour
 
         if len(available_moves) > 0:
-            root = Node(None, self.player_turn, choice(available_moves), copy(board.piece_matrix))
-            self.player_turn = PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
+            root = Node(
+                None,
+                self.player_turn,
+                choice(available_moves),
+                copy(board.piece_matrix),
+            )
+            self.player_turn = (
+                PlayerTurn.WHITE
+                if self.colour == Colour.WHITE
+                else PlayerTurn.BLACK
+            )
 
             if root is not None:
                 difference = datetime.utcnow() - self.start_time
@@ -90,8 +110,12 @@ class MonteCarloTreeSearch:
                 states_copy[move[0]][move[1]].colour = Colour.WHITE
                 self.current_colour = PlayerTurn.BLACK
 
-        black_sum = rules.get_number_of_black_pieces(states_copy) + rules.get_territory_for_black(states_copy)
-        white_sum = rules.get_number_of_white_pieces(states_copy) + rules.get_territory_for_white(states_copy)
+        black_sum = rules.get_number_of_black_pieces(
+            states_copy
+        ) + rules.get_territory_for_black(states_copy)
+        white_sum = rules.get_number_of_white_pieces(
+            states_copy
+        ) + rules.get_territory_for_white(states_copy)
 
         if black_sum > white_sum:
             return 1
