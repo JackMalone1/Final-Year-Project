@@ -41,10 +41,7 @@ class Board:
         self.offset = 30
         self.set_up_grid()
         self.piece_matrix = [
-            [
-                Piece((-10, -10), Colour.CLEAR, row, col)
-                for col in range(self.size + 1)
-            ]
+            [Piece((-10, -10), Colour.CLEAR, row, col) for col in range(self.size + 1)]
             for row in range(self.size + 1)
         ]
         self.play_piece_sound = pygame.mixer.Sound(piece_sound_effect_path)
@@ -54,10 +51,7 @@ class Board:
     def render(self, screen: pygame.display) -> None:
         screen.blit(self.background, self.background_rect)
         [
-            [
-                pygame.draw.rect(screen, pygame.Color(0, 0, 0), col, 3)
-                for col in row
-            ]
+            [pygame.draw.rect(screen, pygame.Color(0, 0, 0), col, 3) for col in row]
             for row in self.board
         ]
 
@@ -65,29 +59,21 @@ class Board:
             for piece in row:
                 piece.render(screen)
         [
-            self.font.render_to(
-                screen, number.position, number.string, (0, 0, 0)
-            )
+            self.font.render_to(screen, number.position, number.string, (0, 0, 0))
             for number in self.numbers
         ]
         [
-            self.font.render_to(
-                screen, letter.position, letter.string, (0, 0, 0)
-            )
+            self.font.render_to(screen, letter.position, letter.string, (0, 0, 0))
             for letter in self.letters
         ]
 
-    def check_mouse_position(
-        self, mouse_position, current_colour: PlayerTurn
-    ) -> bool:
+    def check_mouse_position(self, mouse_position, current_colour: PlayerTurn) -> bool:
         for x in range(self.size + 1):
             for y in range(self.size + 1):
                 if self.board_intersections[x][y].collidepoint(mouse_position):
                     if self.piece_matrix[x][y].colour is Colour.CLEAR:
                         self.play_piece_sound.play()
-                        return self.place_piece_at_position(
-                            current_colour, (x, y)
-                        )
+                        return self.place_piece_at_position(current_colour, (x, y))
         return False
 
     def place_ko(self, rules, colour, position):
@@ -135,9 +121,7 @@ class Board:
         if has_placed_piece:
             rules = GoRules(self.piece_matrix, self.size)
             rules.opposite_colour = (
-                Colour.BLACK
-                if current_colour is PlayerTurn.WHITE
-                else Colour.WHITE
+                Colour.BLACK if current_colour is PlayerTurn.WHITE else Colour.WHITE
             )
             self.piece_matrix = rules.remove_captured_groups_from_board(
                 self.piece_matrix
@@ -177,16 +161,12 @@ class Board:
                     rect = pygame.Rect(
                         x_position, y_position, self.tile_size, self.tile_size
                     )
-                    intersection = pygame.Rect(
-                        x_position - 5, y_position - 5, 10, 10
-                    )
+                    intersection = pygame.Rect(x_position - 5, y_position - 5, 10, 10)
                     self.board[x][y] = rect
                     self.board_intersections[x][y] = intersection
                 else:
                     x_position = self.offset + (x * self.tile_size)
-                    intersection = pygame.Rect(
-                        x_position - 5, y_position - 5, 10, 10
-                    )
+                    intersection = pygame.Rect(x_position - 5, y_position - 5, 10, 10)
                     self.board_intersections[x][y] = intersection
         self.set_up_numbers()
 

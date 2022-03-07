@@ -35,19 +35,11 @@ class GoRules:
     def get_piece_at_position(self, row: int, col: int) -> Piece:
         return self.piece_matrix[row][col]
 
-    def get_adjacent_of_colour(
-        self, row: int, col: int, colour: Colour
-    ) -> list:
+    def get_adjacent_of_colour(self, row: int, col: int, colour: Colour) -> list:
         adjacent_pieces = []
-        if (
-            row - 1 >= 0
-            and self.get_piece_at_position(row - 1, col).colour is colour
-        ):
+        if row - 1 >= 0 and self.get_piece_at_position(row - 1, col).colour is colour:
             adjacent_pieces.append(self.get_piece_at_position(row - 1, col))
-        if (
-            col - 1 >= 0
-            and self.get_piece_at_position(row, col - 1).colour is colour
-        ):
+        if col - 1 >= 0 and self.get_piece_at_position(row, col - 1).colour is colour:
             adjacent_pieces.append(self.get_piece_at_position(row, col - 1))
         if (
             row + 1 <= self.size
@@ -65,14 +57,9 @@ class GoRules:
         self, position: tuple, colour: Colour, current_colour: PlayerTurn
     ) -> bool:
         self.current_colour = current_colour
-        if (
-            self.piece_matrix[position[0]][position[1]].colour
-            is not Colour.CLEAR
-        ):
+        if self.piece_matrix[position[0]][position[1]].colour is not Colour.CLEAR:
             return False
-        self.opposite_colour = (
-            Colour.BLACK if colour is Colour.WHITE else Colour.WHITE
-        )
+        self.opposite_colour = Colour.BLACK if colour is Colour.WHITE else Colour.WHITE
 
         board_copy = self.piece_matrix.copy()
 
@@ -81,9 +68,7 @@ class GoRules:
                 board_copy[i][j].colour = self.piece_matrix[i][j].colour
         board_copy[position[0]][position[1]].colour = colour
         self.remove_captured_groups_from_board(board_copy)
-        liberties = self.get_adjacent_of_colour(
-            position[0], position[1], Colour.CLEAR
-        )
+        liberties = self.get_adjacent_of_colour(position[0], position[1], Colour.CLEAR)
         liberties.extend(
             self.get_adjacent_of_colour(position[0], position[1], Colour.Ko)
         )
@@ -91,15 +76,9 @@ class GoRules:
             position[0], position[1], colour
         )
         can_be_placed = (
-            True
-            if board_copy[position[0]][position[1]].colour is colour
-            else False
+            True if board_copy[position[0]][position[1]].colour is colour else False
         )
-        if (
-            not liberties
-            and not surrounded_by_same_colour
-            and not can_be_placed
-        ):
+        if not liberties and not surrounded_by_same_colour and not can_be_placed:
             return False
         if (
             len(
@@ -148,16 +127,13 @@ class GoRules:
         adjacent_pieces = self.get_adjacent_of_colour(row, col, colour)
         for piece in adjacent_pieces:
             if piece not in group:
-                self.create_group_from_piece(
-                    piece.row, piece.col, group, colour
-                )
+                self.create_group_from_piece(piece.row, piece.col, group, colour)
         return group
 
     def get_all_groups_on_board(self, piece_matrix):
         groups = [[]]
         has_been_checked = [
-            [False for row in range(self.size + 1)]
-            for col in range(self.size + 1)
+            [False for row in range(self.size + 1)] for col in range(self.size + 1)
         ]
 
         for row in range(self.size + 1):
@@ -174,9 +150,7 @@ class GoRules:
     def get_liberties_for_group(self, group) -> list:
         all_liberties = []
         for piece in group:
-            liberties = self.get_adjacent_of_colour(
-                piece.row, piece.col, Colour.CLEAR
-            )
+            liberties = self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)
             all_liberties.extend(liberties)
             all_liberties.extend(
                 self.get_adjacent_of_colour(piece.row, piece.col, Colour.Ko)
@@ -192,14 +166,7 @@ class GoRules:
                 if piece.colour is Colour.CLEAR:
                     free_spaces.append(piece)
         for piece in free_spaces:
-            if (
-                len(
-                    self.get_adjacent_of_colour(
-                        piece.row, piece.col, Colour.CLEAR
-                    )
-                )
-                > 0
-            ):
+            if len(self.get_adjacent_of_colour(piece.row, piece.col, Colour.CLEAR)) > 0:
                 possible_moves.append((piece.row, piece.col))
         return possible_moves
 
@@ -256,31 +223,46 @@ class GoRules:
                     sum += 1
         return sum
 
+    """
+    Defining black territory as any empty spot that is fully surrounded by only black
+    """
+
+    def get_black_territory(self, piece_matrix):
+        sum = 0
+        for row in range(len(piece_matrix)):
+            for col in range(len(piece_matrix[row])):
+                if piece_matrix[row][col].colour == Colour.CLEAR and len(
+                    self.get_adjacent_of_colour(row, col, Colour.BLACK)
+                ):
+                    sum += 1
+        return sum
+
+    """
+    Defining white territory as any empty spot that is fully surrounded by only white
+    """
+
+    def get_white_territory(self, piece_matrix):
+        sum = 0
+        for row in range(len(piece_matrix)):
+            for col in range(len(piece_matrix[row])):
+                if piece_matrix[row][col].colour == Colour.CLEAR and len(
+                    self.get_adjacent_of_colour(row, col, Colour.WHITE)
+                ):
+                    sum += 1
+        return sum
+
+    """
+    returns an integer representation of how the game is approximately going
+    black will have a positive when they are winning and will return a negative value if white is winning
+    if 0 is returned then the game is fairly simple
+    the function is kept fairly simple as it will be called a lot inside of the minimax algorithm so needs to be
+    as fast as possible
+    """
+
     def score(self, piece_matrix):
-        return self.get_number_of_black_pieces(
-            piece_matrix
-        ) - self.get_number_of_white_pieces(piece_matrix)
-
-    def get_territory_for_black(self, piece_matrix):
-        sum = 0
-        for row in piece_matrix:
-            for piece in row:
-                if piece.colour == Colour.CLEAR:
-                    liberties = self.get_adjacent_of_colour(
-                        piece.row, piece.col, Colour.BLACK
-                    )
-                    if len(liberties) > 2:
-                        sum += 1
-        return sum
-
-    def get_territory_for_white(self, piece_matrix):
-        sum = 0
-        for row in piece_matrix:
-            for piece in row:
-                if piece.colour == Colour.CLEAR:
-                    liberties = self.get_adjacent_of_colour(
-                        piece.row, piece.col, Colour.WHITE
-                    )
-                    if len(liberties) > 2:
-                        sum += 1
-        return sum
+        return (
+            self.get_number_of_black_pieces(piece_matrix)
+            + self.get_black_territory(piece_matrix)
+            - self.get_number_of_white_pieces(piece_matrix)
+            - self.get_white_territory(piece_matrix)
+        )

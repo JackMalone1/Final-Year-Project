@@ -10,9 +10,7 @@ import numpy as np
 
 
 class Node:
-    def __init__(
-        self, parent, player: PlayerTurn, position: tuple, board: Board
-    ):
+    def __init__(self, parent, player: PlayerTurn, position: tuple, board: Board):
         self.parent = None
         self.score = 0
         self.visited = 0
@@ -68,8 +66,7 @@ class Node:
     # usual value for the exploration constant is sqrt(2)
     def uct1(self, exploration_param):
         return (self.score / self.visited) + (
-            exploration_param
-            * np.sqrt(np.log(self.parent.visited) / self.visited)
+            exploration_param * np.sqrt(np.log(self.parent.visited) / self.visited)
         )
 
     def as_copy(self, other_node):

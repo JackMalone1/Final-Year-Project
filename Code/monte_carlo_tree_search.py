@@ -19,9 +19,7 @@ class MonteCarloTreeSearch:
         self.max_moves = 10
         self.colour = colour
         self.player_turn = (
-            PlayerTurn.WHITE
-            if self.colour == Colour.WHITE
-            else PlayerTurn.BLACK
+            PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
         )
         self.start_time = datetime.utcnow()
         self.exploration = 320
@@ -35,9 +33,7 @@ class MonteCarloTreeSearch:
         rules = GoRules(copy(board.piece_matrix), board.size)
         self.current_step = 0
         self.size = board.size
-        available_moves = rules.get_legal_spots_to_play(
-            copy(board.piece_matrix)
-        )
+        available_moves = rules.get_legal_spots_to_play(copy(board.piece_matrix))
         best_value = -math.inf
         best_move = Node(
             None,
@@ -56,9 +52,7 @@ class MonteCarloTreeSearch:
                 copy(board.piece_matrix),
             )
             self.player_turn = (
-                PlayerTurn.WHITE
-                if self.colour == Colour.WHITE
-                else PlayerTurn.BLACK
+                PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
             )
 
             if root is not None:
@@ -127,7 +121,6 @@ class MonteCarloTreeSearch:
             return -1
         else:
             return 0
-
 
     def early_cutoff(self) -> bool:
         if not self.use_early_cutoff:

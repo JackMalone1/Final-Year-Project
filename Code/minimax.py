@@ -43,12 +43,14 @@ class MiniMax:
         else:
             return None
 
-    def minimiser(
-        self, state: Board, alpha: int, beta: int, depth: int
-    ) -> Move:
+    def minimiser(self, state: Board, alpha: int, beta: int, depth: int) -> Move:
         rules = GoRules(state, self.size)
         possible_moves = rules.get_legal_spots_to_play(state)
-        if depth == self.MAX_DEPTH or len(possible_moves) == 0:
+        if (
+            depth == self.MAX_DEPTH
+            or len(possible_moves) == 0
+            or self.is_time_limit_reached()
+        ):
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
@@ -82,12 +84,14 @@ class MiniMax:
         move.score = beta
         return move
 
-    def maximiser(
-        self, state: Board, alpha: int, beta: int, depth: int
-    ) -> Move:
+    def maximiser(self, state: Board, alpha: int, beta: int, depth: int) -> Move:
         rules = GoRules(state, self.size)
         possible_moves = rules.get_legal_spots_to_play(state)
-        if depth == self.MAX_DEPTH or len(possible_moves) == 0:
+        if (
+            depth == self.MAX_DEPTH
+            or len(possible_moves) == 0
+            or self.is_time_limit_reached()
+        ):
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
@@ -126,4 +130,3 @@ class MiniMax:
         current_time = datetime.utcnow()
         difference = current_time - self.start_time
         return difference >= timedelta(seconds=30)
-

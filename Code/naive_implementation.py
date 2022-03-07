@@ -133,9 +133,7 @@ class Position(namedtuple("Position", ["board", "ko"])):
     def play_move(self, fc, color):
         board, ko = self
         if fc == ko:
-            raise IllegalMove(
-                "%s\n Move at %s illegally retakes ko." % (self, fc)
-            )
+            raise IllegalMove("%s\n Move at %s illegally retakes ko." % (self, fc))
 
         if board[fc] != EMPTY:
             raise IllegalMove("%s\n Stone exists at %s." % (self, fc))

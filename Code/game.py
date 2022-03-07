@@ -27,9 +27,7 @@ class GameManager:
         pygame.display.set_caption("Monte Carlo Tree Search")
         self.width = 1000
         self.height = 800
-        self.screen = pygame.display.set_mode(
-            (self.width, self.height), RESIZABLE
-        )
+        self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
         self.running = True
         background = pygame.image.load("Assets//background.jpg")
         self.board = Board(
@@ -91,9 +89,7 @@ class GameManager:
     """
 
     def init_ui(self):
-        self.button = thorpy.make_button(
-            "Quit", func=thorpy.functions.quit_func
-        )
+        self.button = thorpy.make_button("Quit", func=thorpy.functions.quit_func)
         self.pass_button = thorpy.make_button("Pass", func=self.pass_func)
         self.box = thorpy.Box(elements=[self.button, self.pass_button])
         self.menu = thorpy.Menu(self.box)
@@ -176,11 +172,9 @@ class GameManager:
                 played_move = False
 
                 if (
-                    self.current_colour is PlayerTurn.BLACK
-                    and self.alpha_beta_player1
+                    self.current_colour is PlayerTurn.BLACK and self.alpha_beta_player1
                 ) or (
-                    self.current_colour is PlayerTurn.WHITE
-                    and self.alpha_beta_player2
+                    self.current_colour is PlayerTurn.WHITE and self.alpha_beta_player2
                 ):
                     position = alpha_beta.get_best_move_in_time(
                         deepcopy(self.board.piece_matrix),
@@ -188,11 +182,9 @@ class GameManager:
                     )
                     played_move = True
                 elif (
-                    self.current_colour is PlayerTurn.BLACK
-                    and self.monte_carlo_player1
+                    self.current_colour is PlayerTurn.BLACK and self.monte_carlo_player1
                 ) or (
-                    self.current_colour is PlayerTurn.WHITE
-                    and self.monte_carlo_player2
+                    self.current_colour is PlayerTurn.WHITE and self.monte_carlo_player2
                 ):
                     position = monte_carlo.get_best_move_in_time(self.board)
                     played_move = True
@@ -259,9 +251,7 @@ class GameManager:
             self.box.update()
         elif not self.game_over:
             self.background.blit()
-            self.main_menu_box.set_topleft(
-                (self.width / 2 - 50, self.height / 2 - 50)
-            )
+            self.main_menu_box.set_topleft((self.width / 2 - 50, self.height / 2 - 50))
             self.main_menu_box.blit()
             self.main_menu_box.update()
 
