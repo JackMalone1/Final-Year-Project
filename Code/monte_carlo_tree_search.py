@@ -27,9 +27,13 @@ class MonteCarloTreeSearch:
         self.exploration = 320
         self.size = 0
         self.current_colour = PlayerTurn.BLACK
+        self.use_early_cutoff = False
+        self.current_step = 0
+        self.minimum_steps = 15
 
     def get_best_move_in_time(self, board):
         rules = GoRules(copy(board.piece_matrix), board.size)
+        self.current_step = 0
         self.size = board.size
         available_moves = rules.get_legal_spots_to_play(
             copy(board.piece_matrix)
@@ -123,3 +127,15 @@ class MonteCarloTreeSearch:
             return -1
         else:
             return 0
+
+
+    def early_cutoff(self) -> bool:
+        if not self.use_early_cutoff:
+            return False
+        if self.current_step < self.minimum_steps:
+            return False
+        if self.is_goal_stable():
+            return self.current_step >= 10
+
+    def is_goal_stable(self):
+        return True
