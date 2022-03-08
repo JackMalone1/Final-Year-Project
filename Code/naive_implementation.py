@@ -32,8 +32,17 @@ def is_on_board(c):
 
 def get_valid_neighbours(fc):
     x, y = unflatten(fc)
-    possible_neighbours = ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1))
-    return [flatten(n) for n in possible_neighbours if is_on_board(n)]
+    possible_neighbours = (
+        (x + 1, y),
+        (x - 1, y),
+        (x, y + 1),
+        (x, y - 1),
+    )
+    return [
+        flatten(n)
+        for n in possible_neighbours
+        if is_on_board(n)
+    ]
 
 
 NEIGHBOURS = [get_valid_neighbours(fc) for fc in range(NN)]
@@ -111,7 +120,10 @@ def is_koish(board, fc):
     if board[fc] != EMPTY:
         return None
     neighbour_colours = {board[fn] for fn in NEIGHBOURS[fc]}
-    if len(neighbour_colours) == 1 and not EMPTY in neighbour_colours:
+    if (
+        len(neighbour_colours) == 1
+        and not EMPTY in neighbour_colours
+    ):
         return list(neighbour_colours)[0]
     else:
         return None
@@ -133,10 +145,15 @@ class Position(namedtuple("Position", ["board", "ko"])):
     def play_move(self, fc, color):
         board, ko = self
         if fc == ko:
-            raise IllegalMove("%s\n Move at %s illegally retakes ko." % (self, fc))
+            raise IllegalMove(
+                "%s\n Move at %s illegally retakes ko."
+                % (self, fc)
+            )
 
         if board[fc] != EMPTY:
-            raise IllegalMove("%s\n Stone exists at %s." % (self, fc))
+            raise IllegalMove(
+                "%s\n Stone exists at %s." % (self, fc)
+            )
 
         possible_ko_color = is_koish(board, fc)
         new_board = place_stone(color, board, fc)
@@ -152,15 +169,24 @@ class Position(namedtuple("Position", ["board", "ko"])):
 
         opp_captured = 0
         for fs in opp_stones:
-            new_board, captured = maybe_capture_stones(new_board, fs)
+            new_board, captured = maybe_capture_stones(
+                new_board, fs
+            )
             opp_captured += len(captured)
 
         # Check for suicide
-        new_board, captured = maybe_capture_stones(new_board, fc)
+        new_board, captured = maybe_capture_stones(
+            new_board, fc
+        )
         if captured:
-            raise IllegalMove("\n%s\n Move at %s is suicide." % (self, fc))
+            raise IllegalMove(
+                "\n%s\n Move at %s is suicide." % (self, fc)
+            )
 
-        if opp_captured == 1 and possible_ko_color == opp_color:
+        if (
+            opp_captured == 1
+            and possible_ko_color == opp_color
+        ):
             new_ko = list(opp_captured)[0]
         else:
             new_ko = None
@@ -173,12 +199,19 @@ class Position(namedtuple("Position", ["board", "ko"])):
             fempty = board.index(EMPTY)
             empties, borders = find_reached(board, fempty)
             possible_border_color = board[list(borders)[0]]
-            if all(board[fb] == possible_border_color for fb in borders):
-                board = bulk_place_stones(possible_border_color, board, empties)
+            if all(
+                board[fb] == possible_border_color
+                for fb in borders
+            ):
+                board = bulk_place_stones(
+                    possible_border_color, board, empties
+                )
             else:
                 # if an empty intersection reaches both white and black,
                 # then it belongs to neither player.
-                board = bulk_place_stones("?", board, empties)
+                board = bulk_place_stones(
+                    "?", board, empties
+                )
         return board.count(BLACK) - board.count(WHITE)
 
     def get_liberties(self):
@@ -188,8 +221,16 @@ class Position(namedtuple("Position", ["board", "ko"])):
             while color in board:
                 fc = board.index(color)
                 stones, borders = find_reached(board, fc)
-                num_libs = len([fb for fb in borders if board[fb] == EMPTY])
+                num_libs = len(
+                    [
+                        fb
+                        for fb in borders
+                        if board[fb] == EMPTY
+                    ]
+                )
                 for fs in stones:
                     liberties[fs] = num_libs
-                board = bulk_place_stones("?", board, stones)
+                board = bulk_place_stones(
+                    "?", board, stones
+                )
         return list(liberties)

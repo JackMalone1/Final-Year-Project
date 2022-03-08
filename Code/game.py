@@ -24,12 +24,18 @@ class GameManager:
         pygame.init()
         logo = pygame.image.load("logo32x32.png")
         pygame.display.set_icon(logo)
-        pygame.display.set_caption("Monte Carlo Tree Search")
+        pygame.display.set_caption(
+            "Monte Carlo Tree Search"
+        )
         self.width = 1000
         self.height = 800
-        self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
+        self.screen = pygame.display.set_mode(
+            (self.width, self.height), RESIZABLE
+        )
         self.running = True
-        background = pygame.image.load("Assets//background.jpg")
+        background = pygame.image.load(
+            "Assets//background.jpg"
+        )
         self.board = Board(
             background=background,
             size=5,
@@ -89,17 +95,31 @@ class GameManager:
     """
 
     def init_ui(self):
-        self.button = thorpy.make_button("Quit", func=thorpy.functions.quit_func)
-        self.pass_button = thorpy.make_button("Pass", func=self.pass_func)
-        self.box = thorpy.Box(elements=[self.button, self.pass_button])
+        self.button = thorpy.make_button(
+            "Quit", func=thorpy.functions.quit_func
+        )
+        self.pass_button = thorpy.make_button(
+            "Pass", func=self.pass_func
+        )
+        self.box = thorpy.Box(
+            elements=[self.button, self.pass_button]
+        )
         self.menu = thorpy.Menu(self.box)
         for element in self.menu.get_population():
             element.surface = self.screen
 
-        self.play_game = thorpy.make_button("Play Game", func=self.start_game)
-        self.player_button = thorpy.Checker("Player", type_="radio")
-        self.monte_carlo_button = thorpy.Checker("Monte Carlo", type_="radio")
-        self.alpha_beta_button = thorpy.Checker("Alpha Beta", type_="radio")
+        self.play_game = thorpy.make_button(
+            "Play Game", func=self.start_game
+        )
+        self.player_button = thorpy.Checker(
+            "Player", type_="radio"
+        )
+        self.monte_carlo_button = thorpy.Checker(
+            "Monte Carlo", type_="radio"
+        )
+        self.alpha_beta_button = thorpy.Checker(
+            "Alpha Beta", type_="radio"
+        )
         self.player_player1 = False
         self.monte_carlo_player1 = False
         self.alpha_beta_player1 = False
@@ -114,9 +134,15 @@ class GameManager:
             ],
             first_value=self.player_button,
         )
-        self.player2_button = thorpy.Checker("Player", type_="radio")
-        self.monte_carlo2_button = thorpy.Checker("Monte Carlo", type_="radio")
-        self.alpha_beta2_button = thorpy.Checker("Alpha Beta", type_="radio")
+        self.player2_button = thorpy.Checker(
+            "Player", type_="radio"
+        )
+        self.monte_carlo2_button = thorpy.Checker(
+            "Monte Carlo", type_="radio"
+        )
+        self.alpha_beta2_button = thorpy.Checker(
+            "Alpha Beta", type_="radio"
+        )
         self.player2_radio_pool = thorpy.RadioPool(
             [
                 self.player2_button,
@@ -142,9 +168,12 @@ class GameManager:
         )
         self.main_menu_box.center()
         self.background = thorpy.Background(
-            image="Assets/background.jpg", elements=[self.main_menu_box]
+            image="Assets/background.jpg",
+            elements=[self.main_menu_box],
         )
-        self.main_menu = thorpy.Menu(elements=self.background, fps=60)
+        self.main_menu = thorpy.Menu(
+            elements=self.background, fps=60
+        )
 
     def run(self):
         while self.running:
@@ -155,26 +184,37 @@ class GameManager:
 
     def update(self):
         if self.game_running:
-            rules = GoRules(self.board.piece_matrix, self.board.size)
-            moves = rules.get_legal_spots_to_play(self.board.piece_matrix)
+            rules = GoRules(
+                self.board.piece_matrix, self.board.size
+            )
+            moves = rules.get_legal_spots_to_play(
+                self.board.piece_matrix
+            )
             colour = (
                 Colour.BLACK
                 if self.current_colour == PlayerTurn.BLACK
                 else Colour.WHITE
             )
             if len(moves) > 0:
-                monte_carlo = MonteCarloTreeSearch(self.board, colour)
+                monte_carlo = MonteCarloTreeSearch(
+                    self.board, colour
+                )
                 alpha_beta = MiniMax(4, self.board.size)
 
                 is_maximiser = (
-                    True if self.current_colour is PlayerTurn.BLACK else False
+                    True
+                    if self.current_colour
+                    is PlayerTurn.BLACK
+                    else False
                 )
                 played_move = False
 
                 if (
-                    self.current_colour is PlayerTurn.BLACK and self.alpha_beta_player1
+                    self.current_colour is PlayerTurn.BLACK
+                    and self.alpha_beta_player1
                 ) or (
-                    self.current_colour is PlayerTurn.WHITE and self.alpha_beta_player2
+                    self.current_colour is PlayerTurn.WHITE
+                    and self.alpha_beta_player2
                 ):
                     position = alpha_beta.get_best_move_in_time(
                         deepcopy(self.board.piece_matrix),
@@ -182,22 +222,28 @@ class GameManager:
                     )
                     played_move = True
                 elif (
-                    self.current_colour is PlayerTurn.BLACK and self.monte_carlo_player1
+                    self.current_colour is PlayerTurn.BLACK
+                    and self.monte_carlo_player1
                 ) or (
-                    self.current_colour is PlayerTurn.WHITE and self.monte_carlo_player2
+                    self.current_colour is PlayerTurn.WHITE
+                    and self.monte_carlo_player2
                 ):
-                    position = monte_carlo.get_best_move_in_time(self.board)
+                    position = monte_carlo.get_best_move_in_time(
+                        self.board
+                    )
                     played_move = True
 
                 if played_move:
                     print(position)
 
                     self.board.place_piece_at_position(
-                        self.current_colour, position.position
+                        self.current_colour,
+                        position.position,
                     )
                     self.current_colour = (
                         PlayerTurn.WHITE
-                        if self.current_colour is PlayerTurn.BLACK
+                        if self.current_colour
+                        is PlayerTurn.BLACK
                         else PlayerTurn.BLACK
                     )
 
@@ -215,7 +261,8 @@ class GameManager:
                 if (
                     self.current_colour is PlayerTurn.BLACK
                     and self.player_player1
-                    or self.current_colour is PlayerTurn.WHITE
+                    or self.current_colour
+                    is PlayerTurn.WHITE
                     and self.player_player2
                 ):
                     self.place_piece()
@@ -241,7 +288,9 @@ class GameManager:
             width = self.width
         if height < self.height:
             height = self.height
-        self.screen = pygame.display.set_mode((width, height), RESIZABLE)
+        self.screen = pygame.display.set_mode(
+            (width, height), RESIZABLE
+        )
 
     def render(self):
         if self.game_running:
@@ -251,7 +300,9 @@ class GameManager:
             self.box.update()
         elif not self.game_over:
             self.background.blit()
-            self.main_menu_box.set_topleft((self.width / 2 - 50, self.height / 2 - 50))
+            self.main_menu_box.set_topleft(
+                (self.width / 2 - 50, self.height / 2 - 50)
+            )
             self.main_menu_box.blit()
             self.main_menu_box.update()
 
