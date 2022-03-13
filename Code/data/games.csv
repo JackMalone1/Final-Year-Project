@@ -1,0 +1,4 @@
+player1,player2,player1Territory,player1Captures,player2Territory,player2Captures,boardSize,time_allowed
+MonteCarlo,MonteCarlo,5,7,10,6,0,
+MonteCarlo,AlphaBeta,5,9,7,0,5,
+MonteCarlo,AlphaBeta,4,10,6,1,5,5
