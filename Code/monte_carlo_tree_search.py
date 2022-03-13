@@ -32,6 +32,10 @@ class MonteCarloTreeSearch:
         self.use_early_cutoff = False
         self.current_step = 0
         self.minimum_steps = 15
+        self.moves_calculated = 0
+
+    def get_moves_calculated(self) -> int:
+        return self.moves_calculated
 
     def get_best_move_in_time(self, board):
         rules = GoRules(
@@ -81,6 +85,7 @@ class MonteCarloTreeSearch:
                         )
 
                 print(len(root.children))
+                self.moves_calculated = len(root.children)
 
                 for node in root.children:
                     if node.visited == 0:
@@ -141,12 +146,7 @@ class MonteCarloTreeSearch:
             states_copy
         ) + rules.get_territory_for_white(states_copy)
 
-        if black_sum > white_sum:
-            return 1
-        elif white_sum > black_sum:
-            return -1
-        else:
-            return 0
+        return rules.score(states_copy)
 
     def early_cutoff(self) -> bool:
         if not self.use_early_cutoff:

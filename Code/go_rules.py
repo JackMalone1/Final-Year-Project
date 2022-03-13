@@ -128,8 +128,10 @@ class GoRules:
                 position[0], position[1], Colour.Ko
             )
         )
-        surrounded_by_same_colour = self.get_adjacent_of_colour(
-            position[0], position[1], colour
+        surrounded_by_same_colour = (
+            self.get_adjacent_of_colour(
+                position[0], position[1], colour
+            )
         )
         can_be_placed = (
             True
@@ -230,11 +232,15 @@ class GoRules:
                     != Colour.CLEAR
                 ):
                     if not has_been_checked[row][col]:
-                        group = self.create_group_from_piece(
-                            row,
-                            col,
-                            [],
-                            piece_matrix[row][col].colour,
+                        group = (
+                            self.create_group_from_piece(
+                                row,
+                                col,
+                                [],
+                                piece_matrix[row][
+                                    col
+                                ].colour,
+                            )
                         )
                         has_been_checked[row][col] = True
                         groups.append(group)
@@ -291,8 +297,10 @@ class GoRules:
             if len(group) > 0:
                 if group[0].colour == self.opposite_colour:
                     if group[0].colour != Colour.Ko:
-                        liberties = self.get_liberties_for_group(
-                            group
+                        liberties = (
+                            self.get_liberties_for_group(
+                                group
+                            )
                         )
                         if len(liberties) == 0:
                             self.killed_groups.append(
@@ -307,8 +315,10 @@ class GoRules:
                     and group[0].colour != Colour.CLEAR
                 ):
                     if group[0].colour != Colour.Ko:
-                        liberties = self.get_liberties_for_group(
-                            group
+                        liberties = (
+                            self.get_liberties_for_group(
+                                group
+                            )
                         )
                         if len(liberties) == 0:
                             self.killed_groups.append(

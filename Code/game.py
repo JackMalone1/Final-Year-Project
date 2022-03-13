@@ -5,6 +5,9 @@ import thorpy
 from pygame.constants import FULLSCREEN, RESIZABLE
 from board import Board
 from colours import Colour
+from databaseCRUD import *
+from database_move import DatabaseMove
+from database_game import DatabaseGame
 from monte_carlo_tree_search import MonteCarloTreeSearch
 from player_type import PlayerType
 from playerturn import PlayerTurn
@@ -17,6 +20,11 @@ def react_func(event):
 
 class GameManager:
     def __init__(self):
+        self.sent_game_data = False
+        self.player1_text = ""
+        self.player2_text = ""
+        self.player1_captures = 0
+        self.player2_captures = 0
         self.init()
         self.init_ui()
 
@@ -36,9 +44,10 @@ class GameManager:
         background = pygame.image.load(
             "Assets//background.jpg"
         )
+        self.board_size = 5
         self.board = Board(
             background=background,
-            size=5,
+            size=self.board_size,
             font_path="MONOFONT.ttf",
             piece_sound_effect_path="Assets//Sounds//place_piece.ogg",
         )
@@ -72,22 +81,25 @@ class GameManager:
         self.game_running = True
         selected = self.radio_pool.get_selected()
         if selected == self.player_button:
-            print("Player is player one")
             self.player_player1 = True
+            self.player1_text = "Player"
         elif selected == self.monte_carlo_button:
-            print("Minimax is player one")
             self.monte_carlo_player1 = True
+            self.player1_text = "MonteCarlo"
         elif selected == self.alpha_beta_button:
-            print("Alpha beta is player one")
             self.alpha_beta_player1 = True
+            self.player1_text = "AlphaBeta"
 
         player_two = self.player2_radio_pool.get_selected()
         if player_two == self.player2_button:
             self.player_player2 = True
+            self.player2_text = "Player"
         elif player_two == self.monte_carlo2_button:
             self.monte_carlo_player2 = True
+            self.player2_text = "MonteCarlo"
         elif player_two == self.alpha_beta2_button:
             self.alpha_beta_player2 = True
+            self.player2_text = "AlphaBeta"
 
     """
     Creates all of the different UI buttons for the main menu screen. This lets you start the game 
@@ -195,6 +207,15 @@ class GameManager:
                 if self.current_colour == PlayerTurn.BLACK
                 else Colour.WHITE
             )
+
+            database_colour = (
+                "Black"
+                if self.current_colour == PlayerTurn.BLACK
+                else "White"
+            )
+            player_type = ""
+            moves_calculated = 0
+
             if len(moves) > 0:
                 monte_carlo = MonteCarloTreeSearch(
                     self.board, colour
@@ -216,11 +237,19 @@ class GameManager:
                     self.current_colour is PlayerTurn.WHITE
                     and self.alpha_beta_player2
                 ):
-                    position = alpha_beta.get_best_move_in_time(
-                        deepcopy(self.board.piece_matrix),
-                        is_maximiser=is_maximiser,
+                    position = (
+                        alpha_beta.get_best_move_in_time(
+                            deepcopy(
+                                self.board.piece_matrix
+                            ),
+                            is_maximiser=is_maximiser,
+                        )
                     )
                     played_move = True
+                    player_type = "AlphaBeta"
+                    moves_calculated = (
+                        alpha_beta.get_moves_calculated()
+                    )
                 elif (
                     self.current_colour is PlayerTurn.BLACK
                     and self.monte_carlo_player1
@@ -228,24 +257,98 @@ class GameManager:
                     self.current_colour is PlayerTurn.WHITE
                     and self.monte_carlo_player2
                 ):
-                    position = monte_carlo.get_best_move_in_time(
-                        self.board
+                    position = (
+                        monte_carlo.get_best_move_in_time(
+                            self.board
+                        )
                     )
                     played_move = True
+                    player_type = "Minimax"
+                    moves_calculated = (
+                        monte_carlo.get_moves_calculated()
+                    )
 
                 if played_move:
-                    print(position)
-
+                    other_colour_count = (
+                        rules.get_number_of_white_pieces(
+                            self.board.piece_matrix
+                        )
+                        if self.current_colour
+                        == Colour.BLACK
+                        else rules.get_number_of_black_pieces(
+                            self.board.piece_matrix
+                        )
+                    )
                     self.board.place_piece_at_position(
                         self.current_colour,
                         position.position,
                     )
+
+                    new_count = (
+                        rules.get_number_of_white_pieces(
+                            self.board.piece_matrix
+                        )
+                        if self.current_colour
+                        == Colour.BLACK
+                        else rules.get_number_of_black_pieces(
+                            self.board.piece_matrix
+                        )
+                    )
+                    if (
+                        self.current_colour
+                        == PlayerTurn.BLACK
+                    ):
+                        self.player1_captures += (
+                            other_colour_count - new_count
+                        )
+                    else:
+                        self.player2_captures += (
+                            other_colour_count - new_count
+                        )
+
                     self.current_colour = (
                         PlayerTurn.WHITE
                         if self.current_colour
                         is PlayerTurn.BLACK
                         else PlayerTurn.BLACK
                     )
+                    database_move = DatabaseMove(
+                        database_colour,
+                        player_type,
+                        moves_calculated,
+                        self.board_size,
+                    )
+                    insert_move(database_move)
+            elif not self.sent_game_data:
+                player1 = self.player1_text
+                player2 = self.player2_text
+                player1_territory = (
+                    rules.get_black_territory(
+                        self.board.piece_matrix
+                    )
+                )
+                player1_captures = abs(
+                    self.player1_captures
+                )
+                player2_territory = (
+                    rules.get_white_territory(
+                        self.board.piece_matrix
+                    )
+                )
+                player2_captures = abs(
+                    self.player2_captures
+                )
+                database_game = DatabaseGame(
+                    player1,
+                    player2,
+                    self.board_size,
+                    player1_territory,
+                    player1_captures,
+                    player2_captures,
+                    player2_territory,
+                )
+                insert_game(database_game)
+                self.sent_game_data = True
 
     def process_events(self):
         for event in pygame.event.get():
@@ -277,6 +380,19 @@ class GameManager:
         )
         if placed_piece:
             self.has_passed = False
+            database_colour = (
+                "Black"
+                if self.current_colour == PlayerTurn.BLACK
+                else "White"
+            )
+            database_move = DatabaseMove(
+                database_colour,
+                "Player",
+                5,
+                self.board_size,
+            )
+            insert_move(database_move)
+
             if self.current_colour is PlayerTurn.BLACK:
                 self.current_colour = PlayerTurn.WHITE
             elif self.current_colour is PlayerTurn.WHITE:

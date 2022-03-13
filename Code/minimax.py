@@ -20,6 +20,10 @@ class MiniMax:
         self.size = size
         self.min_value = -100_000_000
         self.max_value = 100_000_000
+        self.moves_calculated = 0
+
+    def get_moves_calculated(self) -> int:
+        return self.moves_calculated
 
     def get_best_move_in_time(
         self, state, is_maximiser: bool
@@ -75,6 +79,8 @@ class MiniMax:
         move.score = 0
 
         for possible_move in possible_moves:
+            if depth == 0:
+                self.moves_calculated += 1
             board_copy = deepcopy(state)
             board_copy[possible_move[0]][
                 possible_move[1]

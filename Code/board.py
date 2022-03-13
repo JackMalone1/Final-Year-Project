@@ -179,8 +179,10 @@ class Board:
                 if current_colour is PlayerTurn.WHITE
                 else Colour.WHITE
             )
-            self.piece_matrix = rules.remove_captured_groups_from_board(
-                self.piece_matrix
+            self.piece_matrix = (
+                rules.remove_captured_groups_from_board(
+                    self.piece_matrix
+                )
             )
         return has_placed_piece
 
