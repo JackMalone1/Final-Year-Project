@@ -27,6 +27,7 @@ class GameManager:
         self.player2_captures = 0
         self.init()
         self.init_ui()
+        self.calculation_time = 5
 
     def init(self):
         pygame.init()
@@ -101,6 +102,36 @@ class GameManager:
             self.alpha_beta_player2 = True
             self.player2_text = "AlphaBeta"
 
+        time_allocated = self.time_radio_pool.get_selected()
+        if time_allocated == self.five_seconds_button:
+            self.calculation_time = 5
+        elif time_allocated == self.fifteen_seconds_button:
+            self.calculation_time = 15
+        elif time_allocated == self.twenty_seconds_button:
+            self.calculation_time = 20
+
+        board_size = self.board_size_pool.get_selected()
+        if board_size == self.five_by_five_board:
+            self.create_board(5)
+        elif board_size == self.nine_by_nine_board:
+            self.create_board(9)
+        elif board_size == self.thirteen_by_thirteen_board:
+            self.create_board(13)
+        elif board_size == self.nineteen_by_nineteen_board:
+            self.create_board(19)
+
+    def create_board(self, size):
+        self.board_size = size
+        background = pygame.image.load(
+            "Assets//background.jpg"
+        )
+        self.board = Board(
+            background=background,
+            size=self.board_size,
+            font_path="MONOFONT.ttf",
+            piece_sound_effect_path="Assets//Sounds//place_piece.ogg",
+        )
+
     """
     Creates all of the different UI buttons for the main menu screen. This lets you start the game 
     as well as deciding what ai you want to play against or play against someone else or wathc the ai play.
@@ -163,8 +194,26 @@ class GameManager:
             ],
             first_value=self.player2_button,
         )
+
+        self.five_seconds_button = thorpy.Checker("5", type_="radio")
+        self.fifteen_seconds_button = thorpy.Checker("15", type_="radio")
+        self.twenty_seconds_button = thorpy.Checker("20", type_="radio")
+
+        self.time_radio_pool = thorpy.RadioPool([self.five_seconds_button, self.fifteen_seconds_button, self.twenty_seconds_button], first_value=self.five_seconds_button)
+
+        self.five_by_five_board = thorpy.Checker("5x5", type_="radio")
+        self.nine_by_nine_board = thorpy.Checker("9x9", type_="radio")
+        self.thirteen_by_thirteen_board = thorpy.Checker("13x13", type_="radio")
+        self.nineteen_by_nineteen_board = thorpy.Checker("19x19", type_="radio")
+
+        self.board_size_pool = thorpy.RadioPool([self.five_by_five_board, self.nine_by_nine_board, self.thirteen_by_thirteen_board, self.nineteen_by_nineteen_board],
+                                                first_value=self.five_by_five_board)
+
         self.text = thorpy.Element(text="Player 1")
         self.player2 = thorpy.Element(text="Player 2")
+        self.time_limit = thorpy.Element(text="Time Limit")
+        self.board_size_text = thorpy.Element(text="Board Size")
+
         self.main_menu_box = thorpy.Box(
             elements=[
                 self.play_game,
@@ -176,6 +225,15 @@ class GameManager:
                 self.player2_button,
                 self.monte_carlo2_button,
                 self.alpha_beta2_button,
+                self.time_limit,
+                self.five_seconds_button,
+                self.fifteen_seconds_button,
+                self.twenty_seconds_button,
+                self.board_size_text,
+                self.five_by_five_board,
+                self.nine_by_nine_board,
+                self.thirteen_by_thirteen_board,
+                self.nineteen_by_nineteen_board,
             ]
         )
         self.main_menu_box.center()
@@ -220,7 +278,9 @@ class GameManager:
                 monte_carlo = MonteCarloTreeSearch(
                     self.board, colour
                 )
+                monte_carlo.calculation_time = self.calculation_time
                 alpha_beta = MiniMax(4, self.board.size)
+                alpha_beta.calculation_time = self.calculation_time
 
                 is_maximiser = (
                     True
@@ -317,6 +377,7 @@ class GameManager:
                         player_type,
                         moves_calculated,
                         self.board_size,
+                        self.calculation_time,
                     )
                     insert_move(database_move)
             elif not self.sent_game_data:
@@ -346,6 +407,7 @@ class GameManager:
                     player1_captures,
                     player2_captures,
                     player2_territory,
+                    self.calculation_time,
                 )
                 insert_game(database_game)
                 self.sent_game_data = True
@@ -390,6 +452,7 @@ class GameManager:
                 "Player",
                 5,
                 self.board_size,
+                10,
             )
             insert_move(database_move)
 

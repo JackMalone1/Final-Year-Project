@@ -8,6 +8,7 @@ class DatabaseGame:
         player1_captures,
         player2_captures,
         player2_territory,
+        time_allowed,
     ):
         self.player1 = player1
         self.player2 = player2
@@ -16,3 +17,4 @@ class DatabaseGame:
         self.player1_captures = player1_captures
         self.player2_captures = player2_captures
         self.player2_territory = player2_territory
+        self.time_allowed = time_allowed

@@ -8,12 +8,13 @@ c = conn.cursor()
 def insert_move(move):
     with conn:
         c.execute(
-            "INSERT INTO moves VALUES (:colour, :player, :calculatedMoves, :boardSize)",
+            "INSERT INTO moves VALUES (:colour, :player, :calculatedMoves, :boardSize, :time_allowed)",
             {
                 "colour": move.colour,
                 "player": move.player,
                 "calculatedMoves": move.calculated_moves,
                 "boardSize": move.board_size,
+                "time_allowed": move.time_allowed,
             },
         )
 
@@ -50,7 +51,7 @@ def remove_move(move):
 def insert_game(game):
     with conn:
         c.execute(
-            "INSERT INTO games VALUES (:player1, :player2, :player1Territory, :player1Captures, :player2Territory, :player2Captures, :boardSize)",
+            "INSERT INTO games VALUES (:player1, :player2, :player1Territory, :player1Captures, :player2Territory, :player2Captures, :boardSize, :time_allowed)",
             {
                 "player1": game.player1,
                 "player2": game.player2,
@@ -59,6 +60,7 @@ def insert_game(game):
                 "player2Territory": game.player2_territory,
                 "player2Captures": game.player2_captures,
                 "boardSize": game.board_size,
+                "time_allowed": game.time_allowed,
             },
         )
 
@@ -84,7 +86,7 @@ def remove_game(game):
         c.execute(
             "DELETE from games WHERE player1=:player1 AND player2=:player2"
             " AND boardSize=:boardSize AND player1Territory=:player1Territory AND player1Captures=:player1Captures"
-            " AND player2Territory=:player2Territory AND player2Captures=:player2Captures",
+            " AND player2Territory=:player2Territory AND player2Captures=:player2Captures AND time_allowed=:time_allowed",
             {
                 "player1": game.player1,
                 "player2": game.player2,
@@ -93,5 +95,6 @@ def remove_game(game):
                 "player1Captures": game.player1_captures,
                 "player2Territory": game.player2_territory,
                 "player2Captures": game.player2_captures,
+                "time_allowed": game.time_allowed,
             },
         )

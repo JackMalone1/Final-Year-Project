@@ -33,6 +33,7 @@ class MonteCarloTreeSearch:
         self.current_step = 0
         self.minimum_steps = 15
         self.moves_calculated = 0
+        self.calculation_time = 5
 
     def get_moves_calculated(self) -> int:
         return self.moves_calculated
@@ -75,7 +76,7 @@ class MonteCarloTreeSearch:
                 )
 
                 for _ in range(self.exploration):
-                    if difference < timedelta(seconds=5):
+                    if difference < timedelta(seconds=self.calculation_time):
                         n = self.expansion(copy(root))
                         root.children.extend(n.children)
                         n.backup(self.run_simulation(n))
@@ -138,14 +139,6 @@ class MonteCarloTreeSearch:
                     move[1]
                 ].colour = Colour.WHITE
                 self.current_colour = PlayerTurn.BLACK
-
-        black_sum = rules.get_number_of_black_pieces(
-            states_copy
-        ) + rules.get_territory_for_black(states_copy)
-        white_sum = rules.get_number_of_white_pieces(
-            states_copy
-        ) + rules.get_territory_for_white(states_copy)
-
         return rules.score(states_copy)
 
     def early_cutoff(self) -> bool:
