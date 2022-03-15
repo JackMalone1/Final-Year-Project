@@ -8,13 +8,15 @@ c = conn.cursor()
 def insert_move(move):
     with conn:
         c.execute(
-            "INSERT INTO moves VALUES (:colour, :player, :calculatedMoves, :boardSize, :time_allowed)",
+            "INSERT INTO moves VALUES (:colour, :player, :calculatedMoves, :boardSize, :time_allowed, :move_number, :game_id)",
             {
                 "colour": move.colour,
                 "player": move.player,
                 "calculatedMoves": move.calculated_moves,
                 "boardSize": move.board_size,
                 "time_allowed": move.time_allowed,
+                "move_number": move.move_number,
+                "game_id": move.game_id,
             },
         )
 
@@ -51,7 +53,8 @@ def remove_move(move):
 def insert_game(game):
     with conn:
         c.execute(
-            "INSERT INTO games VALUES (:player1, :player2, :player1Territory, :player1Captures, :player2Territory, :player2Captures, :boardSize, :time_allowed)",
+            "INSERT INTO games VALUES (:player1, :player2, :player1Territory,"
+            " :player1Captures, :player2Territory, :player2Captures, :boardSize, :time_allowed, :game_id)",
             {
                 "player1": game.player1,
                 "player2": game.player2,
@@ -61,6 +64,7 @@ def insert_game(game):
                 "player2Captures": game.player2_captures,
                 "boardSize": game.board_size,
                 "time_allowed": game.time_allowed,
+                "game_id": game.game_id,
             },
         )
 

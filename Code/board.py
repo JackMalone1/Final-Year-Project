@@ -30,13 +30,9 @@ class Board:
         self.font = freetype.Font(font_path, 24)
         self.numbers = ["" for i in range(self.size + 1)]
         self.letters = ["" for x in range(self.size + 1)]
-        self.board = [
-            [0 for x in range(self.size)]
-            for y in range(self.size)
-        ]
+        self.board = [[0 for x in range(self.size)] for y in range(self.size)]
         self.board_intersections = [
-            [0 for x in range(self.size + 1)]
-            for y in range(self.size + 1)
+            [0 for x in range(self.size + 1)] for y in range(self.size + 1)
         ]
         self.background = background
         self.background_rect = background.get_rect()
@@ -45,27 +41,17 @@ class Board:
         self.offset = 30
         self.set_up_grid()
         self.piece_matrix = [
-            [
-                Piece((-10, -10), Colour.CLEAR, row, col)
-                for col in range(self.size + 1)
-            ]
+            [Piece((-10, -10), Colour.CLEAR, row, col) for col in range(self.size + 1)]
             for row in range(self.size + 1)
         ]
-        self.play_piece_sound = pygame.mixer.Sound(
-            piece_sound_effect_path
-        )
+        self.play_piece_sound = pygame.mixer.Sound(piece_sound_effect_path)
         self.current_colour = PlayerTurn.BLACK
         self.rules = GoRules(self.piece_matrix, self.size)
 
     def render(self, screen: pygame.display) -> None:
         screen.blit(self.background, self.background_rect)
         [
-            [
-                pygame.draw.rect(
-                    screen, pygame.Color(0, 0, 0), col, 3
-                )
-                for col in row
-            ]
+            [pygame.draw.rect(screen, pygame.Color(0, 0, 0), col, 3) for col in row]
             for row in self.board
         ]
 
@@ -91,22 +77,13 @@ class Board:
             for letter in self.letters
         ]
 
-    def check_mouse_position(
-        self, mouse_position, current_colour: PlayerTurn
-    ) -> bool:
+    def check_mouse_position(self, mouse_position, current_colour: PlayerTurn) -> bool:
         for x in range(self.size + 1):
             for y in range(self.size + 1):
-                if self.board_intersections[x][
-                    y
-                ].collidepoint(mouse_position):
-                    if (
-                        self.piece_matrix[x][y].colour
-                        is Colour.CLEAR
-                    ):
+                if self.board_intersections[x][y].collidepoint(mouse_position):
+                    if self.piece_matrix[x][y].colour is Colour.CLEAR:
                         self.play_piece_sound.play()
-                        return self.place_piece_at_position(
-                            current_colour, (x, y)
-                        )
+                        return self.place_piece_at_position(current_colour, (x, y))
         return False
 
     def place_ko(self, rules, colour, position):
@@ -115,28 +92,16 @@ class Board:
             rules.killed_groups[0][0].col,
         )
         self.piece_matrix[row][col].set_colour(Colour.Ko)
-        self.piece_matrix[position[0]][
-            position[1]
-        ].set_position(
-            self.board_intersections[position[0]][
-                position[1]
-            ].center
+        self.piece_matrix[position[0]][position[1]].set_position(
+            self.board_intersections[position[0]][position[1]].center
         )
-        self.piece_matrix[position[0]][
-            position[1]
-        ].set_colour(colour)
+        self.piece_matrix[position[0]][position[1]].set_colour(colour)
 
     def remove_ko(self, colour, position):
-        self.piece_matrix[position[0]][
-            position[1]
-        ].set_position(
-            self.board_intersections[position[0]][
-                position[1]
-            ].center
+        self.piece_matrix[position[0]][position[1]].set_position(
+            self.board_intersections[position[0]][position[1]].center
         )
-        self.piece_matrix[position[0]][
-            position[1]
-        ].set_colour(colour)
+        self.piece_matrix[position[0]][position[1]].set_colour(colour)
 
         for row in self.piece_matrix:
             for piece in row:
@@ -148,11 +113,8 @@ class Board:
     ) -> bool:
         has_placed_piece = False
         rules = GoRules(self.piece_matrix, self.size)
-        if (
-            current_colour is PlayerTurn.BLACK
-            and rules.is_move_legal(
-                position, Colour.BLACK, current_colour
-            )
+        if current_colour is PlayerTurn.BLACK and rules.is_move_legal(
+            position, Colour.BLACK, current_colour
         ):
             if rules.possible_ko:
                 has_placed_piece = True
@@ -160,11 +122,8 @@ class Board:
             else:
                 has_placed_piece = True
                 self.remove_ko(Colour.BLACK, position)
-        elif (
-            current_colour is PlayerTurn.WHITE
-            and rules.is_move_legal(
-                position, Colour.WHITE, current_colour
-            )
+        elif current_colour is PlayerTurn.WHITE and rules.is_move_legal(
+            position, Colour.WHITE, current_colour
         ):
             if rules.possible_ko:
                 has_placed_piece = True
@@ -175,14 +134,10 @@ class Board:
         if has_placed_piece:
             rules = GoRules(self.piece_matrix, self.size)
             rules.opposite_colour = (
-                Colour.BLACK
-                if current_colour is PlayerTurn.WHITE
-                else Colour.WHITE
+                Colour.BLACK if current_colour is PlayerTurn.WHITE else Colour.WHITE
             )
-            self.piece_matrix = (
-                rules.remove_captured_groups_from_board(
-                    self.piece_matrix
-                )
+            self.piece_matrix = rules.remove_captured_groups_from_board(
+                self.piece_matrix
             )
         return has_placed_piece
 
@@ -195,25 +150,19 @@ class Board:
         y = starting_position[1] + 25
         letters = list(ascii_uppercase)
         letters = [
-            letter
-            for letter in letters
-            if "I" not in letter
+            letter for letter in letters if "I" not in letter
         ]  # I does not show up on the board so remove
         # from list
         for i in range(self.size + 1):
             x = self.offset + (i * self.tile_size)
-            self.letters[i] = Text(
-                text=letters[i], position=(x, y)
-            )
+            self.letters[i] = Text(text=letters[i], position=(x, y))
 
         x = self.board[0][0].x - 25
         y = self.board[0][0].y
         number = 19
         for i in range(self.size + 1):
             y = self.offset + (i * self.tile_size)
-            self.numbers[i] = Text(
-                text=str(number), position=(x, y)
-            )
+            self.numbers[i] = Text(text=str(number), position=(x, y))
             number -= 1
 
     def set_up_grid(self) -> None:
@@ -221,9 +170,7 @@ class Board:
             y_position = self.offset + (y * self.tile_size)
             for x in range(self.size + 1):
                 if x < self.size and y < self.size:
-                    x_position = self.offset + (
-                        x * self.tile_size
-                    )
+                    x_position = self.offset + (x * self.tile_size)
                     rect = pygame.Rect(
                         x_position,
                         y_position,
@@ -237,27 +184,19 @@ class Board:
                         10,
                     )
                     self.board[x][y] = rect
-                    self.board_intersections[x][
-                        y
-                    ] = intersection
+                    self.board_intersections[x][y] = intersection
                 else:
-                    x_position = self.offset + (
-                        x * self.tile_size
-                    )
+                    x_position = self.offset + (x * self.tile_size)
                     intersection = pygame.Rect(
                         x_position - 5,
                         y_position - 5,
                         10,
                         10,
                     )
-                    self.board_intersections[x][
-                        y
-                    ] = intersection
+                    self.board_intersections[x][y] = intersection
         self.set_up_numbers()
 
-    def get_piece_at_position(
-        self, row: int, col: int
-    ) -> Piece:
+    def get_piece_at_position(self, row: int, col: int) -> Piece:
         return self.piece_matrix[row][col]
 
     def get_number_of_black_pieces(self):

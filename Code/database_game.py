@@ -9,6 +9,7 @@ class DatabaseGame:
         player2_captures,
         player2_territory,
         time_allowed,
+        game_id,
     ):
         self.player1 = player1
         self.player2 = player2
@@ -18,3 +19,4 @@ class DatabaseGame:
         self.player2_captures = player2_captures
         self.player2_territory = player2_territory
         self.time_allowed = time_allowed
+        self.game_id = game_id

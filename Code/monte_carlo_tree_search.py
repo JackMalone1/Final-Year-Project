@@ -14,16 +14,12 @@ class MonteCarloTreeSearch:
     def __init__(self, board: Board, colour: Colour):
         self.calculation_time = 20
         self.board = board
-        self.board.piece_matrix = deepcopy(
-            board.piece_matrix
-        )
+        self.board.piece_matrix = deepcopy(board.piece_matrix)
         self.states = []
         self.max_moves = 10
         self.colour = colour
         self.player_turn = (
-            PlayerTurn.WHITE
-            if self.colour == Colour.WHITE
-            else PlayerTurn.BLACK
+            PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
         )
         self.start_time = datetime.utcnow()
         self.exploration = 320
@@ -39,14 +35,10 @@ class MonteCarloTreeSearch:
         return self.moves_calculated
 
     def get_best_move_in_time(self, board):
-        rules = GoRules(
-            copy(board.piece_matrix), board.size
-        )
+        rules = GoRules(copy(board.piece_matrix), board.size)
         self.current_step = 0
         self.size = board.size
-        available_moves = rules.get_legal_spots_to_play(
-            copy(board.piece_matrix)
-        )
+        available_moves = rules.get_legal_spots_to_play(copy(board.piece_matrix))
         best_value = -math.inf
         best_move = Node(
             None,
@@ -56,6 +48,7 @@ class MonteCarloTreeSearch:
         )
         moves = []
         self.current_colour = board.current_colour
+        self.moves_calculated = 0
 
         if len(available_moves) > 0:
             root = Node(
@@ -65,28 +58,19 @@ class MonteCarloTreeSearch:
                 copy(board.piece_matrix),
             )
             self.player_turn = (
-                PlayerTurn.WHITE
-                if self.colour == Colour.WHITE
-                else PlayerTurn.BLACK
+                PlayerTurn.WHITE if self.colour == Colour.WHITE else PlayerTurn.BLACK
             )
 
             if root is not None:
-                difference = (
-                    datetime.utcnow() - self.start_time
-                )
+                difference = datetime.utcnow() - self.start_time
 
                 for _ in range(self.exploration):
                     if difference < timedelta(seconds=self.calculation_time):
                         n = self.expansion(copy(root))
                         root.children.extend(n.children)
                         n.backup(self.run_simulation(n))
-                        difference = (
-                            datetime.utcnow()
-                            - self.start_time
-                        )
-
-                print(len(root.children))
-                self.moves_calculated = len(root.children)
+                        difference = datetime.utcnow() - self.start_time
+                        self.moves_calculated += 1
 
                 for node in root.children:
                     if node.visited == 0:
@@ -106,9 +90,7 @@ class MonteCarloTreeSearch:
         node.board = deepcopy(node.board)
 
         while len(moves) > 0:
-            node.get_more_moves(
-                rules.get_legal_spots_to_play(node.board)
-            )
+            node.get_more_moves(rules.get_legal_spots_to_play(node.board))
             if len(node.possible_moves) > 0:
                 node.board = original_board
                 return node.expand_node()
@@ -121,23 +103,14 @@ class MonteCarloTreeSearch:
         states_copy = deepcopy(node.board)
         rules = GoRules(states_copy, self.size)
 
-        while (
-            len(rules.get_legal_spots_to_play(states_copy))
-            > 0
-        ):
-            possible_moves = rules.get_legal_spots_to_play(
-                states_copy
-            )
+        while len(rules.get_legal_spots_to_play(states_copy)) > 0:
+            possible_moves = rules.get_legal_spots_to_play(states_copy)
             move = choice(possible_moves)
             if self.current_colour == PlayerTurn.BLACK:
-                states_copy[move[0]][
-                    move[1]
-                ].colour = Colour.BLACK
+                states_copy[move[0]][move[1]].colour = Colour.BLACK
                 self.current_colour = PlayerTurn.WHITE
             else:
-                states_copy[move[0]][
-                    move[1]
-                ].colour = Colour.WHITE
+                states_copy[move[0]][move[1]].colour = Colour.WHITE
                 self.current_colour = PlayerTurn.BLACK
         return rules.score(states_copy)
 

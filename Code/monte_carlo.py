@@ -8,9 +8,7 @@ from go_rules import GoRules
 class MonteCarlo(object):
     def __init__(self, board, **kwargs):
         seconds = kwargs.get("time", 30)
-        self.calculation_time = datetime.timedelta(
-            seconds=seconds
-        )
+        self.calculation_time = datetime.timedelta(seconds=seconds)
         self.board = board
         self.states = []
         self.max_moves = kwargs.get("max_moves", 100)
@@ -22,10 +20,7 @@ class MonteCarlo(object):
 
     def get_play(self):
         begin = datetime.datetime.utcnow()
-        while (
-            datetime.datetime.utcnow() - begin
-            < self.calculation_time
-        ):
+        while datetime.datetime.utcnow() - begin < self.calculation_time:
             self.run_simulation()
 
     def run_simulation(self):
@@ -37,9 +32,7 @@ class MonteCarlo(object):
         expand = True
         for t in range(self.max_moves):
             rules = GoRules()
-            available_moves = rules.get_legal_spots_to_play(
-                self.board
-            )
+            available_moves = rules.get_legal_spots_to_play(self.board)
             play = choice(available_moves)
             state = rules.get_next_board_state(state, play)
             states_copy.append(state)

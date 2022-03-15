@@ -33,9 +33,7 @@ class Node:
         else:
             self.board = board
         self.current_colour = (
-            Colour.WHITE
-            if player is PlayerTurn.WHITE
-            else Colour.BLACK
+            Colour.WHITE if player is PlayerTurn.WHITE else Colour.BLACK
         )
         # if self.board.piece_matrix[position[0]][position[1]].colour is Colour.CLEAR:
         # self.board.piece_matrix[position[0]][position[1]].colour = self.current_colour
@@ -58,9 +56,7 @@ class Node:
 
     def get_more_moves(self, moves):
         [
-            self.possible_moves.append(
-                Node(self, Colour.WHITE, move, None)
-            )
+            self.possible_moves.append(Node(self, Colour.WHITE, move, None))
             for move in moves
         ]
 
@@ -76,10 +72,7 @@ class Node:
     # usual value for the exploration constant is sqrt(2)
     def uct1(self, exploration_param):
         return (self.score / self.visited) + (
-            exploration_param
-            * np.sqrt(
-                np.log(self.parent.visited) / self.visited
-            )
+            exploration_param * np.sqrt(np.log(self.parent.visited) / self.visited)
         )
 
     def as_copy(self, other_node):
@@ -87,7 +80,5 @@ class Node:
         self.visited = other_node.visited
         self.parent = other_node.parent
         self.children = deepcopy(other_node.children)
-        self.possible_moves = deepcopy(
-            other_node.possible_moves
-        )
+        self.possible_moves = deepcopy(other_node.possible_moves)
         self.position = other_node.position
