@@ -1,0 +1,4 @@
+player1,player2,player1Territory,player1Captures,player2Territory,player2Captures,boardSize,time_allowed,game_id
+MonteCarlo,AlphaBeta,4,10,6,0,5,5,0e3bc481-a45b-11ec-8210-d45d642199dd
+MonteCarlo,AlphaBeta,3,11,5,1,5,5,12927f26-a45c-11ec-b1f3-d45d642199dd
+MonteCarlo,AlphaBeta,23,74,17,3,13,5,3abf9f23-a45c-11ec-a0ab-d45d642199dd

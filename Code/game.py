@@ -285,7 +285,7 @@ class GameManager:
                 ):
                     position = monte_carlo.get_best_move_in_time(self.board)
                     played_move = True
-                    player_type = "Minimax"
+                    player_type = "MonteCarlo"
                     moves_calculated = monte_carlo.get_moves_calculated()
 
                 if played_move:
