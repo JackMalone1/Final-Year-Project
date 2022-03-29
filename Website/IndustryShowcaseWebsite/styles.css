@@ -373,11 +373,12 @@ img {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  color: #fff;
+  color: rgb(0, 0, 0);
   margin: 1rem;
   height: 625px;
-  width: 400px;
+  width: 700px;
   overflow: auto;
+  background-color: rgba(116, 114, 114, 0.445);
 }
 
 .services h1 {
@@ -495,6 +496,17 @@ img {
     width: 700px;
     overflow: auto;
   }
+
+  .images__container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    color: #fff;
+    margin: 1rem;
+    height: 625px;
+    width: 700px;
+    overflow: auto;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -513,6 +525,17 @@ img {
   .content {
     margin: 3rem;
     height: 950px;
+    width: 300px;
+    overflow: auto;
+  }
+
+  .images__container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    color: #fff;
+    margin: 1rem;
+    height: 725px;
     width: 300px;
     overflow: auto;
   }
