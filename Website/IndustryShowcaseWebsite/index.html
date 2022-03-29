@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!--
-      Site created by Brian Design on youtube @ www.youtube.com/channel/UCsKsymTY_4BYR-wytLjex7A?view_as=subscriber
-    -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HTML CSS Website</title>
@@ -23,32 +20,31 @@
     <!-- Navbar Section -->
     <nav class="navbar">
       <div class="navbar__container">
-        <a href="/" id="navbar__logo"><i class="fas fa-gem"></i>NEXT</a>
         <div class="navbar__toggle" id="mobile-menu">
           <span class="bar"></span> <span class="bar"></span>
           <span class="bar"></span>
         </div>
         <ul class="navbar__menu">
           <li class="navbar__item">
-            <a href="/" class="navbar__links">Home</a>
+            <a href="index.html" class="navbar__links" target="_blank">Home</a>
           </li>
           <li class="navbar__item">
-            <a href="/background.html" class="navbar__links">Project Background</a>
+            <a href="background.html" class="navbar__links" target="_blank">Project Background</a>
           </li>
           <li class="navbar__item">
-            <a href="/researchQuestions.html" class="navbar__links">Research Questions</a>
+            <a href="researchQuestions.html" class="navbar__links" target="_blank">Research Questions</a>
           </li>
           <li class="navbar__item">
-            <a href="/workDone.html" class="navbar__links">Work Done</a>
+            <a href="workDone.html" class="navbar__links" target="_blank">Work Done</a>
           </li>
           <li class="navbar__item">
-            <a href="/ExperimentsResults.html" class="navbar__links">Experiments/Results</a>
+            <a href="ExperimentsResults.html" class="navbar__links" target="_blank">Experiments/Results</a>
           </li>
           <li class="navbar__item">
-            <a href="/conclusions.html" class="navbar__links">Conclusions/Future Work</a>
+            <a href="conclusions.html" class="navbar__links" target="_blank">Conclusions/Future Work</a>
           </li>
           <li class="navbar__item">
-            <a href="/References.html" class="navbar__links">References</a>
+            <a href="References.html" class="navbar__links" target="_blank">References</a>
           </li>
         </ul>
       </div>
@@ -59,14 +55,39 @@
       <h1>See what the hype is about</h1>
       <div class="services__container">
         <div class="services__card">
-          <h2>Experience Bliss</h2>
-          <p>AI Powered technology</p>
-          <button onclick="location.href='background.html'">Get Started</button>
+          <h2>Project Background</h2>
+          <p>Why I chose this project</p>
+          <button onclick="location.href='background.html'">Open</button>
         </div>
         <div class="services__card">
-          <h2>Are you Ready?</h2>
-          <p>Take the leap</p>
-          <button>Get Started</button>
+          <h2>Research Questions?</h2>
+          <p>What am I trying to answer</p>
+          <button onclick="location.href='researchQuestions.html'">Open</button>
+        </div>
+        <div class="services__card">
+          <h2>Work Done</h2>
+          <p>This is what I have managed to do on the project so far</p>
+          <button onclick="location.href='workDone.html'">Open</button>
+        </div>
+        <div class="services__card">
+          <h2>Research Questions?</h2>
+          <p>What am I trying to answer</p>
+          <button onclick="location.href='researchQuestions.html'">Open</button>
+        </div>
+        <div class="services__card">
+          <h2>Experiments and Results</h2>
+          <p>My Results</p>
+          <button onclick="location.href='ExperimentsResults.html'">Open</button>
+        </div>
+        <div class="services__card">
+          <h2>Conclusions</h2>
+          <p>What I have found out so far.</p>
+          <button onclick="location.href='conclusions.html'">Open</button>
+        </div>
+        <div class="services__card">
+          <h2>References</h2>
+          <p>Research papers and online posts that I have used through my research</p>
+          <button onclick="location.href='References.html'">Open</button>
         </div>
       </div>
     </div>
@@ -76,78 +97,20 @@
       <div class="footer__links">
         <div class="footer__link--wrapper">
           <div class="footer__link--items">
-            <h2>About Us</h2>
-            <a href="/sign__up">How it works</a> <a href="/">Testimonials</a>
-            <a href="/">Careers</a> <a href="/">Investments</a>
-            <a href="/">Terms of Service</a>
-          </div>
-          <div class="footer__link--items">
-            <h2>Contact Us</h2>
-            <a href="/">Contact</a> <a href="/">Support</a>
-            <a href="/">Destinations</a> <a href="/">Sponsorships</a>
+            <h2>Project links</h2>
+            <a href="https://github.com/JackMalone1/Final-Year-Project" target="_blank">Github page</a>
           </div>
         </div>
         <div class="footer__link--wrapper">
           <div class="footer__link--items">
             <h2>Videos</h2>
-            <a href="/">Submit Video</a> <a href="/">Ambassadors</a>
-            <a href="/">Agency</a> <a href="/">Influencer</a>
-          </div>
-          <div class="footer__link--items">
-            <h2>Social Media</h2>
-            <a href="/">Instagram</a> <a href="/">Facebook</a>
-            <a href="/">Youtube</a> <a href="/">Twitter</a>
+            <a href="https://github.com/JackMalone1/Final-Year-Project">Project Video</a>
           </div>
         </div>
       </div>
       <section class="social__media">
         <div class="social__media--wrap">
-          <div class="footer__logo">
-            <a href="/" id="footer__logo"><i class="fas fa-gem"></i>NEXT</a>
-          </div>
-          <p class="website__rights">© NEXT 2020. All rights reserved</p>
-          <div class="social__icons">
-            <a
-              class="social__icon--link"
-              href="/"
-              target="_blank"
-              aria-label="Facebook"
-            >
-              <i class="fab fa-facebook"></i>
-            </a>
-            <a
-              class="social__icon--link"
-              href="/"
-              target="_blank"
-              aria-label="Instagram"
-            >
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a
-              class="social__icon--link"
-              href="//www.youtube.com/channel/UCsKsymTY_4BYR-wytLjex7A?view_as=subscriber"
-              target="_blank"
-              aria-label="Youtube"
-            >
-              <i class="fab fa-youtube"></i>
-            </a>
-            <a
-              class="social__icon--link"
-              href="/"
-              target="_blank"
-              aria-label="Twitter"
-            >
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a
-              class="social__icon--link"
-              href="/"
-              target="_blank"
-              aria-label="LinkedIn"
-            >
-              <i class="fab fa-linkedin"></i>
-            </a>
-          </div>
+          <p class="website__rights">Jack Malone C00236428</p>
         </div>
       </section>
     </div>
