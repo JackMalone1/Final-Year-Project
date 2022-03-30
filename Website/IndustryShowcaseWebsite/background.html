@@ -52,17 +52,53 @@
 
     <!-- Services Section -->
     <div class="services">
+      <!-- <div class="services__container">
+        <h1 class>Background</h1>
+      </div> -->
         <div class="services__container">
+          <h1 class>Background</h1>
             <p class="content">
                 The problem domain that I have chosen for this project is to be able to have an Artificial Intelligence be able to play the game of go 
-                or any other similar problem that requires the AI to search through a large search space to be able to figure out the best solution to the problem. 
-    
+                or any other similar problem that requires the AI to search through a large search space to be able to figure out the best solution
+                to the problem. 
                 For this project, I would like to try and implement a version of Monte Carlo tree search such that I can create an AI that is able to efficiently
                 solve a board state of the game of go. I would also like to test my application against a simpler algorithm such as MiniMax to compare how much
                 quicker it is able to solve a position and against a stronger AI as well to see the difference between using it by itself as well with other
                 algorithms that would help the tree search to find even better moves.
             </p>
+
+            <p class="content">
+              Go is a two-player board game in which the aim is to surround more territory than the opponent\cite{G0}. The game of go is
+              usually played on a board that is 19x19 in size but can also be played on different sized smaller boards such as 9x9 or 13x13.
+              For a 19x19 board, there is approximately 250 moves each turn that either player can play. If a game continues for 150 turns
+              approximate turn count), then there would be $250^{150}$ possible moves. Given the possible moves that each player can make per turn,
+              it quickly becomes too much to be able to search through.
+              If we use a game tree to describe how a normal game of go could develop,
+              we would use the 250 possible moves as the branching factor\footnote{how many child nodes each current state has},
+              and use the formula $b^d$ where b is the branching factor and d is the required depth\footnote{how many moves deep we are in to the search}
+              to find how many leaf nodes there are or how many different possible board states there could be\cite{Tree-Search-Introduction}.
+            </p>
+
         </div>  
+        <div class="services__container">
+          <h1 class">Basics of Monte Carlo Tree Search</h1>
+          <p class="content">
+                In 2006, Rémi Coulom described the application of the Monte Carlo method, which uses random sampling for deterministic problems which are
+                difficult to solve with other approaches, to game-tree search and coined the term Monte Carlo tree search\cite{Tree-Search}.
+                Before this was used, go playing programs used different techniques that were more similar to those used in games such as chess 
+                but are less suitable to the more complex game of go. Alpha-go was then introduced which uses two different neural networks which were able
+                to beat world Go champion Lee Sedol in 2016 in South Korea with a lead of 4 games to 1\cite{AlphaGo}. It was first introduced in October of 2015
+                where it played its first match against European champion Fan Hui, with a score of 5-0. The documentary covering this story can be found
+                \href{https://www.youtube.com/watch?v=WXuK6gekU1Y&t=2855s}{here}.
+
+                Alpha go first learned how to play go by learning from amateur games so that it knew how human players thought about the game through supervised 
+                learning. Alpha go was then retrained from games of self play through reinforcement learning which lead to the creation of Alpha zero.
+
+                The number of possible games in go increases exponentially as the game goes on.
+                For example, on move 1 there are 250 possible moves, by move 2 there are 62,500 and by move 10 there are 953,674,316,406,250,000,000,000 possible
+                moves.
+          </p>
+        </div>
     </div>
 
     <!-- Footer Section -->

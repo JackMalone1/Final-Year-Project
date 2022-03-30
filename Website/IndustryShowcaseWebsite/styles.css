@@ -70,8 +70,12 @@ img {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  padding: 0 1rem;
+  padding: 5rem 5rem 5rem 5rem;
   height: 100%;
+}
+
+.reference-list {
+  padding: 0 1rem;
 }
 
 .navbar__btn {
