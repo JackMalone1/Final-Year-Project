@@ -9,6 +9,12 @@ img {
   object-fit: contain;
 }
 
+.sup {
+  position: relative;
+  bottom: 1ex; 
+  font-size: 80%;
+}
+
 .navbar {
   background: #131313;
   height: 80px;
