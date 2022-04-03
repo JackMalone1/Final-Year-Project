@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jack Malone - Monte Carlo Tree Search</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+      integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <nav class="navbar">
+      <div class="navbar__container">
+        <ul class="navbar__menu">
+          <li class="navbar__item">
+            <a href="index.html" class="navbar__links">Home</a>
+          </li>
+          <li class="navbar__item">
+            <a href="background.html" class="navbar__links">Project Background</a>
+          </li>
+          <li class="navbar__item">
+            <a href="researchQuestions.html" class="navbar__links">Research Questions</a>
+          </li>
+          <li class="navbar__item">
+            <a href="workDone.html" class="navbar__links">Work Done</a>
+          </li>
+          <li class="navbar__item">
+            <a href="ExperimentsResults.html" class="navbar__links">Experiments/Results</a>
+          </li>
+          <li class="navbar__item">
+            <a href="ConclusionsFutureWork.html" class="navbar__links">Conclusions/Future Work</a>
+          </li>
+          <li class="navbar__item">
+            <a href="References.html" class="navbar__links">References</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+      <!-- Services Section -->
+    <div class="services">
+      <h1 class>Experiments and Results</h1>
+        <div class="services__container">
+
+            <p class="content">
+              To contrast the two different algorithms that I decided to create, I saved data from multiple games played between the different algorithms.
+              I then kept track of how many moves they were both able to calculate within the time limit given as well at the end of the game I also calculated
+              the number of pioeces captured as well as territory that each of the algorithms was able to get. This would then show which AI won the game
+              as well as on average how well each algorithm did against each other.
+              
+              From my findings in the Jupyter Notebook that I created was that the Monte Carlo Tree Search was able to search through a lot more moves both in
+              the smaller boards as well as scaling up to the larger boards. It was able to reach its max exploration space when the board was 5x5, whereas
+              the alpha beta search was not able to go through that many moves on the board and generally resulted in it picking non optimal moves. Unique to
+              the 5x5 board, it appears as if the alpha beta algorithm actually ended up calculating less moves which makes sense as it has less moves that it
+              needs to go through as there's only so many places you can play.
+              
+              On the larger boards you can see that the alpha beta algorithm starts to calculate less and less moves as it has a larger search space to go through as
+              it increases in the amount of moves as the games go on as the game progresses as they don't have to go through as many moves for each possible moves
+              but it was not far enough through the game for the number of free spaces left on the board would reduce the amount of moves that it calculated.
+
+              For the 13x13 and 19x19 boards I was not able to go through as many moves in teh game as it took a lot longer to generate so that the moves displayed
+              are mostly from the first half or so of the game.
+            </p>
+        </div>  
+        <div class="images__container">
+            <img src="images/alpha-beta-moves-calcualted-5x5.png" alt="Moves Calculated On 5x5 board for alpha beta">
+            <img src="images/alpha-beta-moves-calcualted-13x13.png" alt="Moves Calculated On 13x13 board for alpha beta">
+            <img src="images/alpha-beta-moves-calculated-19x19.png" alt="Moves Calculated On 19x19 board for alpha beta">
+            <img src="images/alpha-beta-territory-5x5.png" alt="Territory On 5x5 board for alpha beta">
+            <img src="images/alpha-beta-territory-13x13.png" alt="Territory On 13x13 board for alpha beta">
+            <img src="images/monte-carlo-moves-calculated-5x5.png" alt="Moves Calculated On 5x5 board for monte carlo">
+            <img src="images/monte-carlo-moves-calculated-13x13.png" alt="Moves Calculated On 13x13 board for monte carlo">
+            <img src="images/monte-carlo-moves-calculated-19x19.png" alt="Moves Calculated On 19x19 board for monte carlo">
+            <img src="images/monte-carlo-territory-5x5.png" alt="Territory On 5x5 board for monte carlo">
+            <img src="images/monte-carlo-territory-13x13.png" alt="Territory On 13x13 board for monte carlo">
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer__container">
+      <div class="footer__links">
+        <div class="footer__link--wrapper">
+          <div class="footer__link--items">
+            <h2>Project links</h2>
+            <a href="https://github.com/JackMalone1/Final-Year-Project" target="_blank">Github page</a>
+          </div>
+        </div>
+        <div class="footer__link--wrapper">
+          <div class="footer__link--items">
+            <h2>Videos</h2>
+            <a href="https://youtu.be/hFmZ0H2ShJY" target="_blank">Project Video</a>
+          </div>
+        </div>
+      </div>
+      <section class="social__media">
+        <div class="social__media--wrap">
+          <p class="website__rights">Jack Malone C00236428</p>
+        </div>
+      </section>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

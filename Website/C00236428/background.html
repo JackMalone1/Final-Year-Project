@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jack Malone - Monte Carlo Tree Search</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+      integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <nav class="navbar">
+      <div class="navbar__container">
+        <ul class="navbar__menu">
+          <li class="navbar__item">
+            <a href="index.html" class="navbar__links">Home</a>
+          </li>
+          <li class="navbar__item">
+            <a href="background.html" class="navbar__links">Project Background</a>
+          </li>
+          <li class="navbar__item">
+            <a href="researchQuestions.html" class="navbar__links">Research Questions</a>
+          </li>
+          <li class="navbar__item">
+            <a href="workDone.html" class="navbar__links">Work Done</a>
+          </li>
+          <li class="navbar__item">
+            <a href="ExperimentsResults.html" class="navbar__links">Experiments/Results</a>
+          </li>
+          <li class="navbar__item">
+            <a href="ConclusionsFutureWork.html" class="navbar__links">Conclusions/Future Work</a>
+          </li>
+          <li class="navbar__item">
+            <a href="References.html" class="navbar__links">References</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Services Section -->
+    <div class="services">
+        <div class="services__container">
+          
+        <h1>Background</h1>
+            <p class="content">
+                The problem domain that I have chosen for this project is to be able to have an Artificial Intelligence be able to play the game of go 
+                or any other similar problem that requires the AI to search through a large search space to be able to figure out the best solution
+                to the problem. 
+                For this project, I would like to try and implement a version of Monte Carlo tree search such that I can create an AI that is able to efficiently
+                solve a board state of the game of go. I would also like to test my application against a simpler algorithm such as MiniMax to compare how much
+                quicker it is able to solve a position and against a stronger AI as well to see the difference between using it by itself as well with other
+                algorithms that would help the tree search to find even better moves.
+            </p>
+
+            <p class="content">
+              Go is a two-player board game in which the aim is to surround more territory than the opponent. The game of go is
+              usually played on a board that is 19x19 in size but can also be played on different sized smaller boards such as 9x9 or 13x13.
+              For a 19x19 board, there is approximately 250 moves each turn that either player can play. If a game continues for 150 turns
+              approximate turn count), then there would be 250 <span class="sup"><i>150</i></span> possible moves. Given the possible moves
+              that each player can make per turn,
+              it quickly becomes too much to be able to search through.
+              If we use a game tree to describe how a normal game of go could develop,
+              we would use the 250 possible moves as the branching factor(how many child nodes each current state has),
+              and use the formula b <span class="sup"><i>d</i></span> where b is the branching factor and d is the required
+              depth(how many moves deep we are in to the search)
+              to find how many leaf nodes there are or how many different possible board states there could be.
+            </p>
+        </div>  
+        <div class="services__container">
+          
+          <h1 >Basics of Monte Carlo Tree Search</h1>
+          <p class="content">
+                In 2006, Rémi Coulom described the application of the Monte Carlo method, which uses random sampling for deterministic problems which are
+                difficult to solve with other approaches, to game-tree search and coined the term Monte Carlo tree search.
+                Before this was used, go playing programs used different techniques that were more similar to those used in games such as chess 
+                but are less suitable to the more complex game of go. Alpha-go was then introduced which uses two different neural networks which were able
+                to beat world Go champion Lee Sedol in 2016 in South Korea with a lead of 4 games to 1. It was first introduced in October of 2015
+                where it played its first match against European champion Fan Hui, with a score of 5-0. The documentary covering this story can be found
+                <a href="https://www.youtube.com/watch?v=WXuK6gekU1Y&t=2855s">here</a>.
+
+                Alpha go first learned how to play go by learning from amateur games so that it knew how human players thought about the game through supervised 
+                learning. Alpha go was then retrained from games of self play through reinforcement learning which lead to the creation of Alpha zero.
+
+                The number of possible games in go increases exponentially as the game goes on.
+                For example, on move 1 there are 250 possible moves, by move 2 there are 62,500 and by move 10 there are 953,674,316,406,250,000,000,000 possible
+                moves.
+          </p>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer__container">
+      <div class="footer__links">
+        <div class="footer__link--wrapper">
+          <div class="footer__link--items">
+            <h2>Project links</h2>
+            <a href="https://github.com/JackMalone1/Final-Year-Project" target="_blank">Github page</a>
+          </div>
+        </div>
+        <div class="footer__link--wrapper">
+          <div class="footer__link--items">
+            <h2>Videos</h2>
+            <a href="https://youtu.be/hFmZ0H2ShJY" target="_blank">Project Video</a>
+          </div>
+        </div>
+      </div>
+      <section class="social__media">
+        <div class="social__media--wrap">
+          <p class="website__rights">Jack Malone C00236428</p>
+        </div>
+      </section>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jack Malone - Monte Carlo Tree Search</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+      integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <nav class="navbar">
+      <div class="navbar__container">
+        <ul class="navbar__menu">
+          <li class="navbar__item">
+            <a href="index.html" class="navbar__links">Home</a>
+          </li>
+          <li class="navbar__item">
+            <a href="background.html" class="navbar__links">Project Background</a>
+          </li>
+          <li class="navbar__item">
+            <a href="researchQuestions.html" class="navbar__links">Research Questions</a>
+          </li>
+          <li class="navbar__item">
+            <a href="workDone.html" class="navbar__links">Work Done</a>
+          </li>
+          <li class="navbar__item">
+            <a href="ExperimentsResults.html" class="navbar__links">Experiments/Results</a>
+          </li>
+          <li class="navbar__item">
+            <a href="ConclusionsFutureWork.html" class="navbar__links">Conclusions/Future Work</a>
+          </li>
+          <li class="navbar__item">
+            <a href="References.html" class="navbar__links">References</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Services Section -->
+    <div class="services">
+      <h1 class>Work Done</h1>
+        <div class="services__container">
+          <h1>Board and game</h1>
+          <p class="content">
+            I set up the visualisation as well as the placement of the board using python and pygame. This was used to be
+            able to display the board whenever the user picked different sizes of the board to be displayed. For palcing pieces
+            I used the default collisions with pygame to set up collisions on each intersection and then check for key presses
+            on them. The UI for the game was created by using an external library called Thorpy. This UI was then used to set
+            up the board size as well as what algorithms to use as well as time alllocated.
+            I created several helper classes as well as the base game to implement the rules of the game so that the game was
+            able to keep track of what pieces were captured after a move as well as to keep track of what moves are legal. The
+            Ai were then able to get all of their available moves from this rules class so that during evaluation they wouldn't
+            accidentally try and play somewhere that they weren't able to such as somewhere that had no liberties.
+            The pieces were set up to keep track of their positions on the board and then all of the pieces that were currently
+            on the board was stored in the board class itself. The rules class was set up so that the AI would be able
+            to use this data easily to keep track of what was happening in the game.
+          </p>
+        </div>
+        <div class="services__container">
+          <h1>Monte Carlo Tree Search</h1>
+          <p class="content">
+              The Monte Carlo Algorithm was set up to have a certain amount of time to be able to figure out a move. I set
+              up the exploration so that it would try to go through as many moves as possible on the first move in the time
+              allocated. It would then use the exploitation term to try and reduce the amount that it had to explore further
+              into the move tree so that it would figure out as much as possible about the good moves as possible while
+              ignoring the worse moves. There is a tradeoff between the two so it took some time to figure out what were
+              good values for these terms to make sure that it exploited as much as possible while also exploring as to
+              make sure that it won't miss a good move that might be bad until a few moves in the future.
+              I also sett up some other functions so that it would keep track of how many moves that it searched through
+              for each move so that this would be able to send to the jupyter notebook after each move. The algorithm
+              used the rules class to find all of the available moves as well as to evaluate a board position to see how
+              good a move is, this will be used to decide on whether or not to keep exploiting a move or if it should go
+              and look at other moves that could be better.
+          </p>
+        </div>
+        <div class="services__container">
+          <h1>Alpha Beta MiniMax</h1>
+          <p class="content">
+              Minimax is a more traditional form of algorithm that has commonly been used to solve different board games.
+              It is not as good for a game such ass Go as the search space is large. This is why I decided to use Alpha Beta
+              MiniMax ass it can cut out a lot of moves that are not neccessary to check ass the other moves would not be played
+              by the other player as they would not be the best move possible in the position.
+              I set up the algorithm in the same way as the Monte arlo Tree search so that it would keep track of how many moves
+              it calculated and only use a certain amount of time as to see how good the algorithms were in a tight time control.
+              I will also be adding zobrist hashing into the algorithm as well as for Monte Carlo Tree Search so that instead
+              of having to recalculate scores for games it will look it up in a database to see if it has already been done to
+              hopefully save computing time so that Alpha Beta is able to go through more moves and hopefully be able to play
+              on larger boards.
+          </p>
+        </div>
+        <div class="services__container">
+          <h1>Data Analytics and storing</h1>
+          <p class="content">
+            I set up a database using sqlite so that every time either of the AI made a move, it was stored with how many
+            moves they were able to calculate as well as other information on the game in general. I also stored data
+            at the end of each game about what ai was playing for each player in the game and how well each player did at the 
+            end of the game. I was also able to use the explorer for sqlite to look at the database visually and also run 
+            SQL as well when I needed to add in extra data or fix small problems in the data that I had Captured.
+            For the data analytics, I used a Jupyter Notebook to analyse excel files that I generated through the database
+            explorer which allowed me to convert the database files to csv files. These would be out into dataframes which I 
+            was able to use pandas and MatplotLib to plot inside of the notebook. I also kept track of averages of the data
+            that was captured inside of the game so that I was able to comapte how well each of the AIs were doing.
+          </p>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer__container">
+      <div class="footer__links">
+        <div class="footer__link--wrapper">
+          <div class="footer__link--items">
+            <h2>Project links</h2>
+            <a href="https://github.com/JackMalone1/Final-Year-Project" target="_blank">Github page</a>
+          </div>
+        </div>
+        <div class="footer__link--wrapper">
+          <div class="footer__link--items">
+            <h2>Videos</h2>
+            <a href="https://youtu.be/hFmZ0H2ShJY" target="_blank">Project Video</a>
+          </div>
+        </div>
+      </div>
+      <section class="social__media">
+        <div class="social__media--wrap">
+          <p class="website__rights">Jack Malone C00236428</p>
+        </div>
+      </section>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
