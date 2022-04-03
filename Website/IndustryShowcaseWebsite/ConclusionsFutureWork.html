@@ -51,11 +51,35 @@
       <div class="services__container">
         
         <p class="content">
-          
+          Monte Carlo Tree Search appears to be a good solution compared to the other more naive approaches to solving board games such as MiniMax
+          while bing easier to implement than more in depth solutions such as Neural Networks. Monte Carlo Tree Search is able to search more moves than
+          MiniMax even when MiniMax has improvements such as Alpha Beta to cut down on the number of different paths that the function has to evaluate.
+          However, even with this improved speed, without extra help to improve its play such as an opening book or specific knowledge about certain patterns
+          it will still have trouble with better opponents unless given a large amount of time to study the given position.
+          Monte Carlo Tree Search is also able to scale up a lot better when given a much larger search space when I compared the two algorithms on the larger
+          13x13 and 19x19 boards as Alpha Beta Minimax is too slow in this scenario to be able to evaluate the position correctly as it has to play out all 
+          possible move states where as Monte Carlo Tree Search tries to only look at the best possible moves as much as possible. If both of these algorithms were
+          given adequate information on opening ideas as well as different common positions that could arise in the game, I could see that Monte Carlo would still
+          perform a lot better on the bigger boards but it would stay a bit more even on the smaller boards where Alpha Beta is able to search through a lot more
+          of the available moves.
         </p>
         <h1>Future Work</h1>
         <p class="content">
-
+          There is still some room to add extra parts to both the Monte Carlo Tree Search as well as the Alpha Beta to try improve both their speed in finding
+          a good move as well as how they evaluate positions. Zobrist Hashing could improve the speed for both of the algorithms as this could save a lot of time
+          in terms of each of the algorithms re-evaluating previously seen positions. Zobrist hashing allows the algorithms to store a hash for a certain board 
+          position along side the generated score for the position so that if it is encountered again you can use this score instead of having to re-evaluate. This
+          can lead to problems in terms of figuring out a good hashing algorithm as to lead to as few collisions as possible, i.e. two different positions getting the
+          same hash which could worsen the algorithms as they could misinterpret a position. How to store all of the different positions alongside their scores also
+          needs to be taken into consideration as look up as well as inputing positions should be as fast as possible to make sure that this is faster than the regular
+          algorithms while also making sure it does not use up too much memory.
+          The algorithms could also be given more domain specific knowledge to try and give them a better edge in determining how to play certain positions as at
+          the moment they may not notice common problems appearing on the board.
+          I would also try to look into other parts of machine learning such as reinforcement learning to see how much a reinforcement learning model could improve
+          the outputs of moves. This would require a lot more resources in order to train as well as to make sure works as intended, but hopefully once trained fully,
+          would lead to better play than the other two approaches mentioned as it can train on a large amount of professional games whereas the other algorithms are
+          just playing based on a custom evaluation function. This could also help with the algorithms not understanding different problems found on the board
+          such as when certain pieces are alive as well as protecting their own pieces and territory better.
         </p>
       </div>  
   </div>
