@@ -95,11 +95,9 @@ class GoRules:
             and not can_be_placed
         ):
             return False
-        # print(self.killed_groups)
+
         self.possible_ko = False
         if len(self.killed_groups) == 1 and len(self.killed_groups[0]) == 1:
-            # print(self.opposite_colour)
-            # print(self.killed_groups[0][0].colour)
             self.possible_ko = True
             self.ko_position = (
                 self.killed_groups[0][0].row,
