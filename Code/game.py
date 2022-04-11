@@ -14,6 +14,8 @@ from playerturn import PlayerTurn
 from minimax import *
 import uuid
 
+from zobrist_hashing import Zobrist
+
 
 def react_func(event):
     print("Hello")
@@ -32,7 +34,7 @@ class GameManager:
         self.init_ui()
         self.calculation_time = 5
 
-    def init(self):
+    def init_pygame_and_display(self):
         pygame.init()
         logo = pygame.image.load("logo32x32.png")
         pygame.display.set_icon(logo)
@@ -40,7 +42,8 @@ class GameManager:
         self.width = 1000
         self.height = 800
         self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
-        self.running = True
+
+    def init_board(self):
         background = pygame.image.load("Assets//background.jpg")
         self.board_size = 5
         self.board = Board(
@@ -49,12 +52,20 @@ class GameManager:
             font_path="MONOFONT.ttf",
             piece_sound_effect_path="Assets//Sounds//place_piece.ogg",
         )
+
+    def init_variables(self):
+        self.running = True
         self.clock = pygame.time.Clock()
         self.current_colour = PlayerTurn.BLACK
         self.time_delta = 0
         self.has_passed = False
         self.game_running = False
         self.game_over = False
+
+    def init(self):
+        self.init_pygame_and_display()
+        self.init_board()
+        self.init_variables()
 
     """
     checks if both of the players passed in a row, if they did then the game is over
@@ -70,13 +81,7 @@ class GameManager:
         elif self.current_colour is PlayerTurn.WHITE:
             self.current_colour = PlayerTurn.BLACK
 
-    """
-    sets up the players for both black and white
-    makes sure to use the correct ai or actual player for both players based on what radio button was pressed
-    """
-
-    def start_game(self):
-        self.game_running = True
+    def select_player_one(self):
         selected = self.radio_pool.get_selected()
         if selected == self.player_button:
             self.player_player1 = True
@@ -88,6 +93,7 @@ class GameManager:
             self.alpha_beta_player1 = True
             self.player1_text = "AlphaBeta"
 
+    def select_player_two(self):
         player_two = self.player2_radio_pool.get_selected()
         if player_two == self.player2_button:
             self.player_player2 = True
@@ -99,6 +105,7 @@ class GameManager:
             self.alpha_beta_player2 = True
             self.player2_text = "AlphaBeta"
 
+    def select_time_allocated(self):
         time_allocated = self.time_radio_pool.get_selected()
         if time_allocated == self.five_seconds_button:
             self.calculation_time = 5
@@ -107,15 +114,33 @@ class GameManager:
         elif time_allocated == self.twenty_seconds_button:
             self.calculation_time = 20
 
+    def select_board_size(self):
         board_size = self.board_size_pool.get_selected()
         if board_size == self.five_by_five_board:
             self.create_board(5)
+            self.board_size = 5
         elif board_size == self.nine_by_nine_board:
             self.create_board(9)
+            self.board_size = 9
         elif board_size == self.thirteen_by_thirteen_board:
             self.create_board(13)
+            self.board_size = 13
         elif board_size == self.nineteen_by_nineteen_board:
             self.create_board(19)
+            self.board_size = 19
+        self.zobrist = Zobrist(self.board_size)
+
+    """
+    sets up the players for both black and white
+    makes sure to use the correct ai or actual player for both players based on what radio button was pressed
+    """
+
+    def start_game(self):
+        self.game_running = True
+        self.select_player_one()
+        self.select_player_two()
+        self.select_time_allocated()
+        self.select_board_size()
 
     def create_board(self, size):
         self.board_size = size
@@ -127,12 +152,7 @@ class GameManager:
             piece_sound_effect_path="Assets//Sounds//place_piece.ogg",
         )
 
-    """
-    Creates all of the different UI buttons for the main menu screen. This lets you start the game 
-    as well as deciding what ai you want to play against or play against someone else or wathc the ai play.
-    """
-
-    def init_ui(self):
+    def init_buttons_and_boxes(self):
         self.button = thorpy.make_button("Quit", func=thorpy.functions.quit_func)
         self.pass_button = thorpy.make_button("Pass", func=self.pass_func)
         self.box = thorpy.Box(elements=[self.button, self.pass_button])
@@ -144,12 +164,30 @@ class GameManager:
         self.player_button = thorpy.Checker("Player", type_="radio")
         self.monte_carlo_button = thorpy.Checker("Monte Carlo", type_="radio")
         self.alpha_beta_button = thorpy.Checker("Alpha Beta", type_="radio")
+        self.player2_button = thorpy.Checker("Player", type_="radio")
+        self.monte_carlo2_button = thorpy.Checker("Monte Carlo", type_="radio")
+        self.alpha_beta2_button = thorpy.Checker("Alpha Beta", type_="radio")
+        self.five_seconds_button = thorpy.Checker("5", type_="radio")
+        self.fifteen_seconds_button = thorpy.Checker("15", type_="radio")
+        self.twenty_seconds_button = thorpy.Checker("20", type_="radio")
+        self.five_by_five_board = thorpy.Checker("5x5", type_="radio")
+        self.nine_by_nine_board = thorpy.Checker("9x9", type_="radio")
+        self.thirteen_by_thirteen_board = thorpy.Checker("13x13", type_="radio")
+        self.nineteen_by_nineteen_board = thorpy.Checker("19x19", type_="radio")
+        self.text = thorpy.Element(text="Player 1")
+        self.player2 = thorpy.Element(text="Player 2")
+        self.time_limit = thorpy.Element(text="Time Limit")
+        self.board_size_text = thorpy.Element(text="Board Size")
+
+    def init_ui_variables(self):
         self.player_player1 = False
         self.monte_carlo_player1 = False
         self.alpha_beta_player1 = False
         self.player_player2 = False
         self.monte_carlo_player2 = False
         self.alpha_beta_player2 = False
+
+    def init_radio_pools(self):
         self.radio_pool = thorpy.RadioPool(
             [
                 self.player_button,
@@ -158,9 +196,7 @@ class GameManager:
             ],
             first_value=self.player_button,
         )
-        self.player2_button = thorpy.Checker("Player", type_="radio")
-        self.monte_carlo2_button = thorpy.Checker("Monte Carlo", type_="radio")
-        self.alpha_beta2_button = thorpy.Checker("Alpha Beta", type_="radio")
+
         self.player2_radio_pool = thorpy.RadioPool(
             [
                 self.player2_button,
@@ -170,10 +206,6 @@ class GameManager:
             first_value=self.player2_button,
         )
 
-        self.five_seconds_button = thorpy.Checker("5", type_="radio")
-        self.fifteen_seconds_button = thorpy.Checker("15", type_="radio")
-        self.twenty_seconds_button = thorpy.Checker("20", type_="radio")
-
         self.time_radio_pool = thorpy.RadioPool(
             [
                 self.five_seconds_button,
@@ -182,11 +214,6 @@ class GameManager:
             ],
             first_value=self.five_seconds_button,
         )
-
-        self.five_by_five_board = thorpy.Checker("5x5", type_="radio")
-        self.nine_by_nine_board = thorpy.Checker("9x9", type_="radio")
-        self.thirteen_by_thirteen_board = thorpy.Checker("13x13", type_="radio")
-        self.nineteen_by_nineteen_board = thorpy.Checker("19x19", type_="radio")
 
         self.board_size_pool = thorpy.RadioPool(
             [
@@ -198,11 +225,7 @@ class GameManager:
             first_value=self.five_by_five_board,
         )
 
-        self.text = thorpy.Element(text="Player 1")
-        self.player2 = thorpy.Element(text="Player 2")
-        self.time_limit = thorpy.Element(text="Time Limit")
-        self.board_size_text = thorpy.Element(text="Board Size")
-
+    def init_ui_display(self):
         self.main_menu_box = thorpy.Box(
             elements=[
                 self.play_game,
@@ -230,6 +253,17 @@ class GameManager:
             image="Assets/background.jpg",
             elements=[self.main_menu_box],
         )
+
+    """
+    Creates all of the different UI buttons for the main menu screen. This lets you start the game 
+    as well as deciding what ai you want to play against or play against someone else or wathc the ai play.
+    """
+
+    def init_ui(self):
+        self.init_buttons_and_boxes()
+        self.init_ui_variables()
+        self.init_radio_pools()
+        self.init_ui_display()
         self.main_menu = thorpy.Menu(elements=self.background, fps=60)
 
     def run(self):
@@ -239,31 +273,69 @@ class GameManager:
             self.process_events()
             self.render()
 
+    def send_game_data(self):
+        rules = GoRules(self.board.piece_matrix, self.board.size)
+        player1 = self.player1_text
+        player2 = self.player2_text
+        player1_territory = rules.get_black_territory(self.board.piece_matrix)
+        player1_captures = abs(self.player1_captures)
+        player2_territory = rules.get_white_territory(self.board.piece_matrix)
+        player2_captures = abs(self.player2_captures)
+        database_game = DatabaseGame(
+            player1,
+            player2,
+            self.board_size,
+            player1_territory,
+            player1_captures,
+            player2_captures,
+            player2_territory,
+            self.calculation_time,
+            str(self.game_id),
+        )
+        insert_game(database_game)
+        self.sent_game_data = True
+
+    def is_maximiser(self) -> bool:
+        return True if self.current_colour is PlayerTurn.BLACK else False
+
+    def get_current_colour(self) -> Colour:
+        return Colour.BLACK if self.current_colour == PlayerTurn.BLACK else Colour.WHITE
+
+    def get_current_colour_as_string(self):
+        return "Black" if self.current_colour == PlayerTurn.BLACK else "White"
+
+    def switch_turns(self):
+        return (
+            PlayerTurn.WHITE
+            if self.current_colour is PlayerTurn.BLACK
+            else PlayerTurn.BLACK
+        )
+
+    def get_count_of_opposite_colour(self):
+        rules = GoRules(self.board.piece_matrix, self.board.size)
+        return (
+            rules.get_number_of_white_pieces(self.board.piece_matrix)
+            if self.current_colour == Colour.BLACK
+            else rules.get_number_of_black_pieces(self.board.piece_matrix)
+        )
+
     def update(self):
         if self.game_running:
             rules = GoRules(self.board.piece_matrix, self.board.size)
             moves = rules.get_legal_spots_to_play(self.board.piece_matrix)
-            colour = (
-                Colour.BLACK
-                if self.current_colour == PlayerTurn.BLACK
-                else Colour.WHITE
-            )
+            colour = self.get_current_colour()
 
-            database_colour = (
-                "Black" if self.current_colour == PlayerTurn.BLACK else "White"
-            )
+            database_colour = self.get_current_colour_as_string()
             player_type = ""
             moves_calculated = 0
 
             if len(moves) > 0:
                 monte_carlo = MonteCarloTreeSearch(self.board, colour)
                 monte_carlo.calculation_time = self.calculation_time
-                alpha_beta = MiniMax(4, self.board.size)
+                alpha_beta = MiniMax(4, self.board.size, self.zobrist)
                 alpha_beta.calculation_time = self.calculation_time
 
-                is_maximiser = (
-                    True if self.current_colour is PlayerTurn.BLACK else False
-                )
+                is_maximiser = self.is_maximiser()
                 played_move = False
 
                 if (
@@ -290,31 +362,21 @@ class GameManager:
 
                 if played_move:
                     self.move_number += 1
-                    other_colour_count = (
-                        rules.get_number_of_white_pieces(self.board.piece_matrix)
-                        if self.current_colour == Colour.BLACK
-                        else rules.get_number_of_black_pieces(self.board.piece_matrix)
-                    )
+                    other_colour_count = self.get_count_of_opposite_colour()
+
                     self.board.place_piece_at_position(
                         self.current_colour,
                         position.position,
                     )
 
-                    new_count = (
-                        rules.get_number_of_white_pieces(self.board.piece_matrix)
-                        if self.current_colour == Colour.BLACK
-                        else rules.get_number_of_black_pieces(self.board.piece_matrix)
-                    )
+                    new_count = self.get_count_of_opposite_colour()
+
                     if self.current_colour == PlayerTurn.BLACK:
                         self.player1_captures += other_colour_count - new_count
                     else:
                         self.player2_captures += other_colour_count - new_count
 
-                    self.current_colour = (
-                        PlayerTurn.WHITE
-                        if self.current_colour is PlayerTurn.BLACK
-                        else PlayerTurn.BLACK
-                    )
+                    self.current_colour = self.switch_turns()
                     database_move = DatabaseMove(
                         database_colour,
                         player_type,
@@ -326,25 +388,7 @@ class GameManager:
                     )
                     insert_move(database_move)
             elif not self.sent_game_data:
-                player1 = self.player1_text
-                player2 = self.player2_text
-                player1_territory = rules.get_black_territory(self.board.piece_matrix)
-                player1_captures = abs(self.player1_captures)
-                player2_territory = rules.get_white_territory(self.board.piece_matrix)
-                player2_captures = abs(self.player2_captures)
-                database_game = DatabaseGame(
-                    player1,
-                    player2,
-                    self.board_size,
-                    player1_territory,
-                    player1_captures,
-                    player2_captures,
-                    player2_territory,
-                    self.calculation_time,
-                    str(self.game_id),
-                )
-                insert_game(database_game)
-                self.sent_game_data = True
+                self.send_game_data()
 
     def process_events(self):
         for event in pygame.event.get():

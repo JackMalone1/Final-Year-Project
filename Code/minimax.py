@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from board import Board
 from colours import Colour
 from go_rules import GoRules
+from zobrist_hashing import Zobrist
 
 
 class Move:
@@ -12,7 +13,7 @@ class Move:
 
 
 class MiniMax:
-    def __init__(self, max_depth: int, size: int):
+    def __init__(self, max_depth: int, size: int, zobrist: Zobrist):
         self.MAX_DEPTH = max_depth
         self.moves = []
         self.calculation_time = 1
@@ -21,6 +22,7 @@ class MiniMax:
         self.min_value = -100_000_000
         self.max_value = 100_000_000
         self.moves_calculated = 0
+        self.zobrist = zobrist
 
     def get_moves_calculated(self) -> int:
         return self.moves_calculated
@@ -42,7 +44,6 @@ class MiniMax:
                 played_move.position = self.minimiser(
                     state, self.min_value, self.max_value, 0
                 ).position
-            print("finished")
             return played_move
         else:
             return None
@@ -64,8 +65,6 @@ class MiniMax:
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
-            if leaf.score != 0:
-                print("Non 0 score: " + str(leaf.score))
             return leaf
 
         move = Move()
@@ -78,7 +77,6 @@ class MiniMax:
             board_copy = deepcopy(state)
             board_copy[possible_move[0]][possible_move[1]].colour = Colour.WHITE
             if self.is_time_limit_reached():
-                print("Time limit reached")
                 possible_score = rules.score(board_copy)
                 if possible_score <= alpha:
                     move.score = possible_score
@@ -113,8 +111,6 @@ class MiniMax:
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
-            if leaf.score != 0:
-                print("Non 0 score: " + str(leaf.score))
             return leaf
 
         move = Move()
@@ -125,7 +121,6 @@ class MiniMax:
             board_copy = deepcopy(state)
             board_copy[possible_move[0]][possible_move[1]].colour = Colour.BLACK
             if self.is_time_limit_reached():
-                print("Time limit reached")
                 possible_score = rules.score(board_copy)
                 if possible_score >= beta:
                     move.score = possible_score

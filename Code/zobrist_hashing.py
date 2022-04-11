@@ -7,7 +7,7 @@ from go_rules import GoRules
 class Zobrist:
     def __init__(self, size: int):
         self.size = size
-        self.table = [[0] * 3 for i in range(size*size)]
+        self.table = [[0] * 3 for i in range(size * size)]
         for i in range(len(self.table)):
             for j in range(len(self.table[i])):
                 random_bits = random.getrandbits(128)
@@ -36,4 +36,3 @@ class Zobrist:
                 j = colour
                 h ^= self.table[i][j]
         return h
-

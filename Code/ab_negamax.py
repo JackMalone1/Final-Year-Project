@@ -30,11 +30,13 @@ class MiniMax:
         difference = current_time - self.start_time
         return difference >= timedelta(seconds=self.calculation_time)
 
-    def ab_negamax(self,
+    def ab_negamax(
+        self,
         state: Board,
         alpha: int,
         beta: int,
-        depth: int,):
+        depth: int,
+    ):
         rules = GoRules(copy(state), self.size)
         possible_moves = rules.get_legal_spots_to_play(copy(state))
         if len(possible_moves) == 0 or depth == 0:
@@ -61,6 +63,8 @@ class MiniMax:
                 move.position = possible_move
                 return move
         return move
+
+
 # If (currPosition.gameOver OR depth==0)
 #   return (currPosition.Score, none)
 # bestMove = none
