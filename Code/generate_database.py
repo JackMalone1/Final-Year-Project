@@ -24,3 +24,6 @@ c.execute(
             boardSize integer
             )"""
 )
+
+conn.commit()
+conn.close()

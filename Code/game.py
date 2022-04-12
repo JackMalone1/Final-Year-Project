@@ -20,7 +20,11 @@ from zobrist_hashing import Zobrist
 def react_func(event):
     print("Hello")
 
-
+"""
+Used as the main game class that includes the main game loop that handles input, updates and rendering
+This will handle running both the Alpha Beta and Minimax algorithms as well as handling whenever the player places
+something on the board
+"""
 class GameManager:
     def __init__(self):
         self.sent_game_data = False
@@ -34,6 +38,9 @@ class GameManager:
         self.init_ui()
         self.calculation_time = 5
 
+    """
+    Initialises pygame and sets up a basic window with a title
+    """
     def init_pygame_and_display(self):
         pygame.init()
         logo = pygame.image.load("logo32x32.png")
@@ -43,6 +50,10 @@ class GameManager:
         self.height = 800
         self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
 
+    """
+    sets up the initial board with the background image and a default size
+    This will be overwritten once the game is started with the correct size of the board
+    """
     def init_board(self):
         background = pygame.image.load("Assets//background.jpg")
         self.board_size = 5
@@ -53,6 +64,9 @@ class GameManager:
             piece_sound_effect_path="Assets//Sounds//place_piece.ogg",
         )
 
+    """
+    initialises the basic game variables
+    """
     def init_variables(self):
         self.running = True
         self.clock = pygame.time.Clock()
@@ -62,6 +76,9 @@ class GameManager:
         self.game_running = False
         self.game_over = False
 
+    """
+    runs all of the other init functions to make sure that everything is set up in the game correctly
+    """
     def init(self):
         self.init_pygame_and_display()
         self.init_board()
@@ -70,7 +87,6 @@ class GameManager:
     """
     checks if both of the players passed in a row, if they did then the game is over
     """
-
     def pass_func(self):
         if self.has_passed:
             self.game_running = False
@@ -81,6 +97,11 @@ class GameManager:
         elif self.current_colour is PlayerTurn.WHITE:
             self.current_colour = PlayerTurn.BLACK
 
+    """
+    Check which one of the radio buttons was selected on the main menu once the player chooses to start the game and 
+    then uses this to set up if the first player should either be an actual player, the Monte Carlo algorithm or 
+    the Alpha Beta algorithm
+    """
     def select_player_one(self):
         selected = self.radio_pool.get_selected()
         if selected == self.player_button:
@@ -93,6 +114,11 @@ class GameManager:
             self.alpha_beta_player1 = True
             self.player1_text = "AlphaBeta"
 
+    """
+    Check which one of the radio buttons was selected on the main menu once the player chooses to start the game and 
+    then uses this to set up if the second player should either be an actual player, the Monte Carlo algorithm or 
+    the Alpha Beta algorithm
+    """
     def select_player_two(self):
         player_two = self.player2_radio_pool.get_selected()
         if player_two == self.player2_button:
@@ -105,6 +131,12 @@ class GameManager:
             self.alpha_beta_player2 = True
             self.player2_text = "AlphaBeta"
 
+    """
+    Check which one of the radio buttons was selected on the main menu once the player chooses to start the game and 
+    then uses this to set up how long both of the algorithms are allowed per move
+    Once the time limit is reached the algorithms will return the best move that they have found so far if they were
+    not able to fully finish the algorithm
+    """
     def select_time_allocated(self):
         time_allocated = self.time_radio_pool.get_selected()
         if time_allocated == self.five_seconds_button:
@@ -114,6 +146,11 @@ class GameManager:
         elif time_allocated == self.twenty_seconds_button:
             self.calculation_time = 20
 
+    """
+    Check which one of the radio buttons was selected on the main menu once the player chooses to start the game and 
+    then uses this to set up what board size the game should use. All of the boards are squares, so choosing 5 will return
+    a 5x5 board to play on
+    """
     def select_board_size(self):
         board_size = self.board_size_pool.get_selected()
         if board_size == self.five_by_five_board:
@@ -142,6 +179,9 @@ class GameManager:
         self.select_time_allocated()
         self.select_board_size()
 
+    """
+    creates the board class with the correct size based on what was picked inside of the main menu
+    """
     def create_board(self, size):
         self.board_size = size
         background = pygame.image.load("Assets//background.jpg")
@@ -152,6 +192,9 @@ class GameManager:
             piece_sound_effect_path="Assets//Sounds//place_piece.ogg",
         )
 
+    """
+    Creates all of the buttons that will be displayed on the main menu of the game
+    """
     def init_buttons_and_boxes(self):
         self.button = thorpy.make_button("Quit", func=thorpy.functions.quit_func)
         self.pass_button = thorpy.make_button("Pass", func=self.pass_func)
@@ -159,7 +202,6 @@ class GameManager:
         self.menu = thorpy.Menu(self.box)
         for element in self.menu.get_population():
             element.surface = self.screen
-
         self.play_game = thorpy.make_button("Play Game", func=self.start_game)
         self.player_button = thorpy.Checker("Player", type_="radio")
         self.monte_carlo_button = thorpy.Checker("Monte Carlo", type_="radio")
@@ -179,6 +221,9 @@ class GameManager:
         self.time_limit = thorpy.Element(text="Time Limit")
         self.board_size_text = thorpy.Element(text="Board Size")
 
+    """
+    Sets up the variables that will be set by the radio buttons on the main menu
+    """
     def init_ui_variables(self):
         self.player_player1 = False
         self.monte_carlo_player1 = False
@@ -187,6 +232,10 @@ class GameManager:
         self.monte_carlo_player2 = False
         self.alpha_beta_player2 = False
 
+    """
+    Groups all of the radio buttons based on if they are being used to set up either of the players, the board size or
+    the amount of time per move 
+    """
     def init_radio_pools(self):
         self.radio_pool = thorpy.RadioPool(
             [
@@ -253,6 +302,7 @@ class GameManager:
             image="Assets/background.jpg",
             elements=[self.main_menu_box],
         )
+        self.main_menu = thorpy.Menu(elements=self.background, fps=60)
 
     """
     Creates all of the different UI buttons for the main menu screen. This lets you start the game 
@@ -264,7 +314,6 @@ class GameManager:
         self.init_ui_variables()
         self.init_radio_pools()
         self.init_ui_display()
-        self.main_menu = thorpy.Menu(elements=self.background, fps=60)
 
     def run(self):
         while self.running:
@@ -332,7 +381,7 @@ class GameManager:
             if len(moves) > 0:
                 monte_carlo = MonteCarloTreeSearch(self.board, colour)
                 monte_carlo.calculation_time = self.calculation_time
-                alpha_beta = MiniMax(4, self.board.size, self.zobrist)
+                alpha_beta = MiniMax(4, self.board.size, self.zobrist, False)
                 alpha_beta.calculation_time = self.calculation_time
 
                 is_maximiser = self.is_maximiser()

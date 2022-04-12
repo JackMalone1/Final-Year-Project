@@ -2,7 +2,9 @@ from copy import copy, deepcopy
 from datetime import datetime, timedelta
 from board import Board
 from colours import Colour
+from database_zobrist import DatabaseZobrist
 from go_rules import GoRules
+from zobristDatabaseCRUD import get_zobrist_by_hash, insert_zobrist_hash
 from zobrist_hashing import Zobrist
 
 
@@ -13,7 +15,7 @@ class Move:
 
 
 class MiniMax:
-    def __init__(self, max_depth: int, size: int, zobrist: Zobrist):
+    def __init__(self, max_depth: int, size: int, zobrist: Zobrist, use_zobrist: bool):
         self.MAX_DEPTH = max_depth
         self.moves = []
         self.calculation_time = 1
@@ -23,6 +25,7 @@ class MiniMax:
         self.max_value = 100_000_000
         self.moves_calculated = 0
         self.zobrist = zobrist
+        self.use_zobrist = use_zobrist
 
     def get_moves_calculated(self) -> int:
         return self.moves_calculated
@@ -49,22 +52,34 @@ class MiniMax:
             return None
 
     def minimiser(
-        self,
-        state: Board,
-        alpha: int,
-        beta: int,
-        depth: int,
+            self,
+            state: Board,
+            alpha: int,
+            beta: int,
+            depth: int,
     ) -> Move:
         rules = GoRules(state, self.size)
         possible_moves = rules.get_legal_spots_to_play(state)
+        hash = self.zobrist.hash(state)
+        states = get_zobrist_by_hash(hash)
+
+        if len(states) > 0 and self.use_zobrist:
+            leaf = Move()
+            leaf.score = states[0][1]
+            leaf.position = (0, 0)
+            return leaf
+
         if (
-            depth == self.MAX_DEPTH
-            or len(possible_moves) == 0
-            or self.is_time_limit_reached()
+                depth == self.MAX_DEPTH
+                or len(possible_moves) == 0
+                or self.is_time_limit_reached()
         ):
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
+            if self.use_zobrist:
+                zobrist_hash = DatabaseZobrist(hash, leaf.score)
+                insert_zobrist_hash(zobrist_hash)
             return leaf
 
         move = Move()
@@ -95,22 +110,34 @@ class MiniMax:
         return move
 
     def maximiser(
-        self,
-        state: Board,
-        alpha: int,
-        beta: int,
-        depth: int,
+            self,
+            state: Board,
+            alpha: int,
+            beta: int,
+            depth: int,
     ) -> Move:
         rules = GoRules(state, self.size)
         possible_moves = rules.get_legal_spots_to_play(state)
+        hash = self.zobrist.hash(state)
+        states = get_zobrist_by_hash(hash)
+
+        if len(states) > 0 and self.use_zobrist:
+            leaf = Move()
+            leaf.score = states[0][1]
+            leaf.position = (0, 0)
+            return leaf
+
         if (
-            depth == self.MAX_DEPTH
-            or len(possible_moves) == 0
-            or self.is_time_limit_reached()
+                depth == self.MAX_DEPTH
+                or len(possible_moves) == 0
+                or self.is_time_limit_reached()
         ):
             leaf = Move()
             leaf.score = rules.score(state)
             leaf.position = (0, 0)
+            if self.use_zobrist:
+                zobrist_hash = DatabaseZobrist(hash, leaf.score)
+                insert_zobrist_hash(zobrist_hash)
             return leaf
 
         move = Move()
