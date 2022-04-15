@@ -21,7 +21,11 @@ goal_steps = 500
 initial_games = 100000
 generated_model = False
 
+def act(state, model):
 
+    act_values = model.predict(state)
+    return np.argmax(act_values[0])
+        
 if __name__ == '__main__':
 
     episodes = 20
@@ -34,7 +38,9 @@ if __name__ == '__main__':
 
         if go_env.game_ended():
             break
-        action = model.predict(state)
+        action = act(state, model)
         print(action)
+        if action not in go_env.valid_moves():
+            action = go_env.uniform_random_action()
         state, reward, done, info = go_env.step(action)
         #state = np.reshape(state, (19,19,6))
