@@ -6,6 +6,10 @@ from piece import Piece
 
 
 def remove_pieces(group: list):
+    """
+    sets all of the pieces in the group to clear so that they are no longer on the board
+    :param group: group that you want to remove from the board
+    """
     for piece in group:
         piece.colour = Colour.CLEAR
 
@@ -209,14 +213,6 @@ class GoRules:
                             remove_pieces(group)
         return piece_matrix
 
-    def get_next_board_state(self, board_state, move):
-        pass
-
-    def winner(self, state_history):
-        # if the game is won, return which player won the game, otherwise return if it's still being played or
-        # return if it is a tie
-        pass
-
     def get_number_of_black_pieces(self, piece_matrix):
         sum = 0
         for row in piece_matrix:
@@ -233,11 +229,12 @@ class GoRules:
                     sum += 1
         return sum
 
-    """
-    Defining black territory as any empty spot that is fully surrounded by only black
-    """
+
 
     def get_black_territory(self, piece_matrix):
+        """
+        Defining black territory as any empty spot that is fully surrounded by only black
+        """
         sum = 0
         for row in range(len(piece_matrix)):
             for col in range(len(piece_matrix[row])):
@@ -247,11 +244,12 @@ class GoRules:
                     sum += 1
         return sum
 
-    """
-    Defining white territory as any empty spot that is fully surrounded by only white
-    """
+
 
     def get_white_territory(self, piece_matrix):
+        """
+        Defining white territory as any empty spot that is fully surrounded by only white
+        """
         sum = 0
         for row in range(len(piece_matrix)):
             for col in range(len(piece_matrix[row])):
@@ -261,15 +259,16 @@ class GoRules:
                     sum += 1
         return sum
 
-    """
-    returns an integer representation of how the game is approximately going
-    black will have a positive when they are winning and will return a negative value if white is winning
-    if 0 is returned then the game is fairly simple
-    the function is kept fairly simple as it will be called a lot inside of the minimax algorithm so needs to be
-    as fast as possible
-    """
+
 
     def score(self, piece_matrix):
+        """
+        returns an integer representation of how the game is approximately going
+        black will have a positive when they are winning and will return a negative value if white is winning
+        if 0 is returned then the game is fairly simple
+        the function is kept fairly simple as it will be called a lot inside of the minimax algorithm so needs to be
+        as fast as possible
+        """
         return (
             self.get_number_of_black_pieces(piece_matrix)
             + self.get_black_territory(piece_matrix)
