@@ -43,12 +43,19 @@ class DQN:
         self.epsilon_decay = .996
         self.memory = deque(maxlen=1000000)
         self.model = self.build_model()
+        print(self.model.summary())
 
     def build_model(self):
         model = tf.keras.Sequential()
-        model.add(layers.Dense(128, input_dim=self.state_space, activation='relu'))
-        model.add(layers.Dense(256, activation='relu'))
+        model.add(layers.Dense(64, input_dim=self.state_space, activation='relu'))
+        model.add(layers.Dense(6, input_dim=self.state_space, activation='relu'))
+        #model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3), input_shape=(6*19*19)))
+        #model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=2))
+        model.add(layers.Dense(19, activation='relu'))
+        model.add(layers.Dense(19, activation='relu'))
         model.add(layers.Dense(self.action_space, activation='linear'))
+        model.add(tf.keras.layers.Flatten())
+        model.add(tf.keras.layers.Dropout(rate=0.2))
         model.compile(loss='mse', optimizer='Adam')
         model.summary()
         return model
@@ -74,11 +81,11 @@ class DQN:
         next_states = np.array([i[3] for i in minibatch])
         dones = np.array([i[4] for i in minibatch])
 
-        states = np.squeeze(states)
+        #states = np.squeeze(states)
         print(states.shape)
         print(next_states.shape)
-        next_states = np.squeeze(next_states)
-
+        #next_states = np.squeeze(next_states)
+        print(self.model.summary())
         targets_full = self.model.predict_on_batch(states)
         targets = rewards + self.gamma * (np.amax(self.model.predict_on_batch(next_states), axis=1)) * (
                      1 - dones)  # Update the q-value
@@ -96,7 +103,7 @@ def train_dqn(episode):
     agent = DQN(go_env.action_space.n, go_env.observation_space.shape[0])
     for e in range(episode):
         state = go_env.reset()
-        state = np.reshape(state, (19*19, 6))
+        state = np.reshape(state, (19,19,6))
         score = 0
         max_steps = 400
 
@@ -107,7 +114,7 @@ def train_dqn(episode):
             #go_env.render('terminal')
             next_state, reward, done, _ = go_env.step(action)
             score += reward
-            next_state = np.reshape(state, (19*19, 6))
+            next_state = np.reshape(next_state, (19,19,6))
             print(state)
             agent.remember(state, action, reward, next_state, done)
             state = next_state

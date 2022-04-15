@@ -30,11 +30,11 @@ if __name__ == '__main__':
     while not done:
         action = go_env.render(mode="human")
         state, reward, done, info = go_env.step(action)
-        state = np.reshape(state, (19 * 19, 6))
+        state = np.reshape(state, (19,19,6))
 
         if go_env.game_ended():
             break
         action = model.predict(state)
         print(action)
         state, reward, done, info = go_env.step(action)
-        state = np.reshape(state, (19 * 19, 6))
+        #state = np.reshape(state, (19,19,6))
