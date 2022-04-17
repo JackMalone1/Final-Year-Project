@@ -20,7 +20,7 @@ parser.add_argument('--komi', type=float, default=0)
 args = parser.parse_args()
 
 # Initialize environment
-go_env = gym.make('gym_go:go-v0', size=args.boardsize, komi=args.komi)
+go_env = gym.make('gym_go:go-v0', size=args.boardsize, komi=args.komi, reward_method="real")
 go_env.reset()
 # Game loop
 done = False
@@ -47,15 +47,16 @@ class DQN:
 
     def build_model(self):
         model = tf.keras.Sequential()
-        model.add(layers.Dense(64, input_dim=self.state_space, activation='relu'))
+        #model.add(layers.Dense(64, input_dim=self.state_space, activation='relu'))
         model.add(layers.Dense(6, input_dim=self.state_space, activation='relu'))
         #model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3), input_shape=(6*19*19)))
         #model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=2))
-        model.add(layers.Dense(19, activation='relu'))
-        model.add(layers.Dense(19, activation='relu'))
-        model.add(layers.Dense(self.action_space, activation='linear'))
+        model.add(layers.Dense(19, input_dim=self.state_space, activation='relu'))
+        model.add(layers.Dense(19, input_dim=self.state_space, activation='relu'))
+        model.add(layers.Dense(64, input_dim=self.state_space, activation='relu'))
+        #model.add(layers.Dense(self.action_space, activation='linear'))
         model.add(tf.keras.layers.Flatten())
-        model.add(tf.keras.layers.Dropout(rate=0.2))
+        #model.add(tf.keras.layers.Dropout(rate=0.2))
         model.compile(loss='mse', optimizer='Adam')
         model.summary()
         return model
@@ -73,26 +74,28 @@ class DQN:
 
         if len(self.memory) < self.batch_size:
             return
-
+        print("Minibatch")
         minibatch = random.sample(self.memory, self.batch_size)
         states = np.array([i[0] for i in minibatch])
         actions = np.array([i[1] for i in minibatch])
         rewards = np.array([i[2] for i in minibatch])
         next_states = np.array([i[3] for i in minibatch])
         dones = np.array([i[4] for i in minibatch])
-
-        #states = np.squeeze(states)
-        print(states.shape)
-        print(next_states.shape)
-        #next_states = np.squeeze(next_states)
-        print(self.model.summary())
+        print("squeeze")
+        states = np.squeeze(states)
+        #print(states.shape)
+        
+        next_states = np.squeeze(next_states)
+        #print(next_states.shape)
+        #print(self.model.summary())
+        print("Predict")
         targets_full = self.model.predict_on_batch(states)
         targets = rewards + self.gamma * (np.amax(self.model.predict_on_batch(next_states), axis=1)) * (
                      1 - dones)  # Update the q-value
 
         ind = np.array([i for i in range(self.batch_size)])
         targets_full[[ind], [actions]] = targets
-
+        print("Fit")
         self.model.fit(states, targets_full, epochs=1, verbose=0)  # Train the network on the new q-values.
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
@@ -105,35 +108,48 @@ def train_dqn(episode):
         state = go_env.reset()
         state = np.reshape(state, (19,19,6))
         score = 0
-        max_steps = 400
+        max_steps = 500
 
         for i in range(max_steps):
             action = agent.act(state)
+            current_amount_of_retries = 0
+            max_times_to_retry = 500
+            picked_invalid_move = False
             if action not in go_env.valid_moves():
-                continue
-            #go_env.render('terminal')
+                #print("Invalid action: " + str(action))
+                picked_invalid_move = True
+                action = go_env.uniform_random_action()
+                #print("Random action: " + str(action))
             next_state, reward, done, _ = go_env.step(action)
+           
+            if picked_invalid_move:
+                reward -= 1
+            else:
+                reward += 2
             score += reward
             next_state = np.reshape(next_state, (19,19,6))
-            print(state)
-            agent.remember(state, action, reward, next_state, done)
+            temp_state = np.reshape(state, (19,19,6))
+            agent.remember(temp_state, action, reward, next_state, done)
             state = next_state
             agent.replay()
             if done:
                 print("episode: {}/{}, score: {}".format(e, episode, score))
                 break
+            print("Step: {} Iteration: {}".format(i, e))
         loss.append(score)
 
         # Average score of last 100 episode
         is_solved = np.mean(loss[-100:])
-        if is_solved > 200:
+        if is_solved > 200000:
             print('\n Task Completed! \n')
             # save model and architecture to single file
             generated_model = True
             agent.model.save("go_model.h5")
             break
+        
         print("Average over last 100 episode: {0:.2f} \n".format(is_solved))
-
+        print("Iteration: {}".format(e))
+    print("Saving Model")
     agent.model.save("go_model.h5")
     return loss
 
@@ -141,7 +157,7 @@ def train_dqn(episode):
 if __name__ == '__main__':
     print(go_env.observation_space)
     print(go_env.action_space)
-    episodes = 4000
+    episodes = 200
     loss = train_dqn(episodes)
     plt.plot([i + 1 for i in range(0, len(loss), 2)], loss[::2])
     plt.show()
