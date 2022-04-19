@@ -11,12 +11,6 @@ args = parser.parse_args()
 
 env = gym.make("gym_go:go-v0", size=args.boardsize, komi=args.komi)
 
-model = PPO("MlpPolicy", env, verbose=1)
-model.learn(total_timesteps=80000)
-model.save("ppo_go")
-
-del model
-
 model = PPO.load("ppo_go")
 
 obs = env.reset()

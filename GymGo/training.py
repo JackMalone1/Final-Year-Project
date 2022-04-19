@@ -20,7 +20,7 @@ parser.add_argument('--komi', type=float, default=0)
 args = parser.parse_args()
 
 # Initialize environment
-go_env = gym.make('gym_go:go-v0', size=args.boardsize, komi=args.komi, reward_method="real")
+go_env = gym.make('gym_go:go-v0', size=args.boardsize, komi=args.komi, reward_method="heuristic")
 go_env.reset()
 # Game loop
 done = False
@@ -46,25 +46,30 @@ class DQN:
         print(self.model.summary())
 
     def build_model(self):
+        """
+        Creates all of the layers for the model, the model is created with 4 layers of 64,19,19,6 which is then flattened and compiled
+        Returns the final generated model
+        """
         model = tf.keras.Sequential()
-        #model.add(layers.Dense(64, input_dim=self.state_space, activation='relu'))
         model.add(layers.Dense(6, input_dim=self.state_space, activation='relu'))
-        #model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=(3, 3), input_shape=(6*19*19)))
-        #model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=2))
         model.add(layers.Dense(19, input_dim=self.state_space, activation='relu'))
         model.add(layers.Dense(19, input_dim=self.state_space, activation='relu'))
         model.add(layers.Dense(64, input_dim=self.state_space, activation='relu'))
-        #model.add(layers.Dense(self.action_space, activation='linear'))
         model.add(tf.keras.layers.Flatten())
-        #model.add(tf.keras.layers.Dropout(rate=0.2))
         model.compile(loss='mse', optimizer='Adam')
         model.summary()
         return model
 
     def remember(self, state, action, reward, next_state, done):
+        """
+        adds the played move to the memory of the ai so that it is able to train on this data
+        """
         self.memory.append((state, action, reward, next_state, done))
 
     def act(self, state):
+        """
+        Gets the model to predict what move should be played based on the state that was passed in
+        """
         if np.random.rand() <= self.epsilon:
             return go_env.uniform_random_action()
         act_values = self.model.predict(state)
@@ -83,16 +88,11 @@ class DQN:
         dones = np.array([i[4] for i in minibatch])
         print("squeeze")
         states = np.squeeze(states)
-        #print(states.shape)
-        
         next_states = np.squeeze(next_states)
-        #print(next_states.shape)
-        #print(self.model.summary())
         print("Predict")
         targets_full = self.model.predict_on_batch(states)
         targets = rewards + self.gamma * (np.amax(self.model.predict_on_batch(next_states), axis=1)) * (
                      1 - dones)  # Update the q-value
-
         ind = np.array([i for i in range(self.batch_size)])
         targets_full[[ind], [actions]] = targets
         print("Fit")
@@ -116,16 +116,10 @@ def train_dqn(episode):
             max_times_to_retry = 500
             picked_invalid_move = False
             if action not in go_env.valid_moves():
-                #print("Invalid action: " + str(action))
                 picked_invalid_move = True
                 action = go_env.uniform_random_action()
-                #print("Random action: " + str(action))
             next_state, reward, done, _ = go_env.step(action)
            
-            if picked_invalid_move:
-                reward -= 1
-            else:
-                reward += 2
             score += reward
             next_state = np.reshape(next_state, (19,19,6))
             temp_state = np.reshape(state, (19,19,6))
@@ -157,7 +151,7 @@ def train_dqn(episode):
 if __name__ == '__main__':
     print(go_env.observation_space)
     print(go_env.action_space)
-    episodes = 200
+    episodes = 250
     loss = train_dqn(episodes)
     plt.plot([i + 1 for i in range(0, len(loss), 2)], loss[::2])
     plt.show()
