@@ -1,7 +1,7 @@
 import sqlite3
 
-#conn = sqlite3.connect(':memory:')
-conn = sqlite3.connect('zobrist.db')
+# conn = sqlite3.connect(':memory:')
+conn = sqlite3.connect("zobrist.db")
 
 c = conn.cursor()
 

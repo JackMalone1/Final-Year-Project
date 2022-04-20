@@ -11,7 +11,21 @@ from playerturn import PlayerTurn
 
 
 class MonteCarloTreeSearch:
+    """
+    Class that generates a move for a given board state using the monte carlo tree search algorithm. Use the get best
+    move
+    in time function passing in the board state that you want to generate a move for for the class to generate a move.
+    """
+
     def __init__(self, board: Board, colour: Colour):
+        """
+        Class that generates a move for a given board state using the monte carlo tree search algorithm. Use the get
+        best move in time function passing in the board state that you want to generate a move for for the class to
+        generate a move.
+        :param board: the current state that the algorithm should generate a move for, algorithm does not alter this
+        state
+        :param colour: what colour the algorithm should make a move for
+        """
         self.calculation_time = 20
         self.board = board
         self.board.piece_matrix = deepcopy(board.piece_matrix)
@@ -32,9 +46,19 @@ class MonteCarloTreeSearch:
         self.calculation_time = 5
 
     def get_moves_calculated(self) -> int:
+        """
+        Gets how many moves that the algorithm was able to go through depending on how much time it was given as well as
+        the size of the board that it was generating a move for.
+        :return: the number of moves that were calculated
+        """
         return self.moves_calculated
 
     def get_best_move_in_time(self, board):
+        """
+        Generates a best move in the time given.
+        :param board: State that we want to generate a move for
+        :return: the move chosen for the state
+        """
         rules = GoRules(copy(board.piece_matrix), board.size)
         self.current_step = 0
         self.size = board.size
@@ -84,6 +108,11 @@ class MonteCarloTreeSearch:
         return best_move
 
     def expansion(self, node: Node):
+        """
+        goes through as many possible moves possible at the current node and gets the best move at this position.
+        :param node: the node that we area currently looking at.
+        :return: the node after expansion was completed
+        """
         rules = GoRules(node.board, self.size)
         moves = rules.get_legal_spots_to_play(node.board)
         original_board = node.board
@@ -100,6 +129,13 @@ class MonteCarloTreeSearch:
         return node
 
     def run_simulation(self, node: Node):
+        """
+        goes through the state in the node and simulates the game for all of the possible moves for the current state
+        switching between which piece to place and the gets the score for that position.
+        Randomly places pieces on the board to save time on trying to simulate every possible state in the position.
+        :param node: node to be calculated
+        :return: score for the state
+        """
         states_copy = deepcopy(node.board)
         rules = GoRules(states_copy, self.size)
 
@@ -121,6 +157,3 @@ class MonteCarloTreeSearch:
             return False
         if self.is_goal_stable():
             return self.current_step >= 10
-
-    def is_goal_stable(self):
-        return True

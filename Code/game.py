@@ -42,7 +42,6 @@ class GameManager:
         self.init_ui()
         self.calculation_time = 5
 
-
     def init_pygame_and_display(self):
         """
         Initialises pygame and sets up a basic window with a title
@@ -54,7 +53,6 @@ class GameManager:
         self.width = 1000
         self.height = 800
         self.screen = pygame.display.set_mode((self.width, self.height), RESIZABLE)
-
 
     def init_board(self):
         """
@@ -70,7 +68,6 @@ class GameManager:
             piece_sound_effect_path="Assets//Sounds//place_piece.ogg",
         )
 
-
     def init_variables(self):
         """
         initialises the basic game variables
@@ -83,7 +80,6 @@ class GameManager:
         self.game_running = False
         self.game_over = False
 
-
     def init(self):
         """
         runs all of the other init functions to make sure that everything is set up in the game correctly
@@ -91,7 +87,6 @@ class GameManager:
         self.init_pygame_and_display()
         self.init_board()
         self.init_variables()
-
 
     def pass_func(self):
         """
@@ -105,7 +100,6 @@ class GameManager:
             self.current_colour = PlayerTurn.WHITE
         elif self.current_colour is PlayerTurn.WHITE:
             self.current_colour = PlayerTurn.BLACK
-
 
     def select_player_one(self):
         """
@@ -124,7 +118,6 @@ class GameManager:
             self.alpha_beta_player1 = True
             self.player1_text = "AlphaBeta"
 
-
     def select_player_two(self):
         """
         Check which one of the radio buttons was selected on the main menu once the player chooses to start the game and
@@ -142,7 +135,6 @@ class GameManager:
             self.alpha_beta_player2 = True
             self.player2_text = "AlphaBeta"
 
-
     def select_time_allocated(self):
         """
         Check which one of the radio buttons was selected on the main menu once the player chooses to start the game and
@@ -157,7 +149,6 @@ class GameManager:
             self.calculation_time = 15
         elif time_allocated == self.twenty_seconds_button:
             self.calculation_time = 20
-
 
     def select_board_size(self):
         """
@@ -180,8 +171,6 @@ class GameManager:
             self.board_size = 19
         self.zobrist = Zobrist(self.board_size)
 
-
-
     def start_game(self):
         """
         sets up the players for both black and white
@@ -192,7 +181,6 @@ class GameManager:
         self.select_player_two()
         self.select_time_allocated()
         self.select_board_size()
-
 
     def create_board(self, size):
         """
@@ -206,7 +194,6 @@ class GameManager:
             font_path="MONOFONT.ttf",
             piece_sound_effect_path="Assets//Sounds//place_piece.ogg",
         )
-
 
     def init_buttons_and_boxes(self):
         """
@@ -237,7 +224,6 @@ class GameManager:
         self.time_limit = thorpy.Element(text="Time Limit")
         self.board_size_text = thorpy.Element(text="Board Size")
 
-
     def init_ui_variables(self):
         """
         Sets up the variables that will be set by the radio buttons on the main menu
@@ -248,7 +234,6 @@ class GameManager:
         self.player_player2 = False
         self.monte_carlo_player2 = False
         self.alpha_beta_player2 = False
-
 
     def init_radio_pools(self):
         """
@@ -292,7 +277,6 @@ class GameManager:
             first_value=self.five_by_five_board,
         )
 
-
     def init_ui_display(self):
         """
         Places all of the buttons in their correct position as well as setting up the background for the main menu
@@ -326,8 +310,6 @@ class GameManager:
         )
         self.main_menu = thorpy.Menu(elements=self.background, fps=60)
 
-
-
     def init_ui(self):
         """
         Creates all of the different UI buttons for the main menu screen. This lets you start the game
@@ -337,7 +319,6 @@ class GameManager:
         self.init_ui_variables()
         self.init_radio_pools()
         self.init_ui_display()
-
 
     def run(self):
         """
@@ -349,7 +330,6 @@ class GameManager:
             self.update()
             self.process_events()
             self.render()
-
 
     def send_game_data(self):
         """
@@ -377,7 +357,6 @@ class GameManager:
         insert_game(database_game)
         self.sent_game_data = True
 
-
     def is_maximiser(self) -> bool:
         """
         This is used for the Alpha Beta algorithm to know if it should take the min or the max score that it has found at a
@@ -386,13 +365,11 @@ class GameManager:
         """
         return True if self.current_colour is PlayerTurn.BLACK else False
 
-
     def get_current_colour(self) -> Colour:
         """
         Gets the Colour of the current player. This changes the Player turn Black into Colour Black
         """
         return Colour.BLACK if self.current_colour == PlayerTurn.BLACK else Colour.WHITE
-
 
     def get_current_colour_as_string(self):
         """
@@ -400,7 +377,6 @@ class GameManager:
         as we can't store custom datatypes
         """
         return "Black" if self.current_colour == PlayerTurn.BLACK else "White"
-
 
     def switch_turns(self):
         """
@@ -411,7 +387,6 @@ class GameManager:
             if self.current_colour is PlayerTurn.BLACK
             else PlayerTurn.BLACK
         )
-
 
     def get_count_of_opposite_colour(self):
         """
@@ -507,13 +482,17 @@ class GameManager:
         Checks if the current player is an actual player
         :return: returns true if an actual player, false otherwise
         """
-        return self.current_colour is PlayerTurn.BLACK and self.player_player1 or self.current_colour is PlayerTurn.WHITE and self.player_player2
+        return (
+            self.current_colour is PlayerTurn.BLACK
+            and self.player_player1
+            or self.current_colour is PlayerTurn.WHITE
+            and self.player_player2
+        )
 
     def process_events(self):
         """
         goes through all mouse and keyboard events and responds to them accordingly
         also sends the events to the ui library so that it is able to update the ui on the screen
-        :return:
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -572,7 +551,6 @@ class GameManager:
     def render(self):
         """
         Renders either the game or the main menu depending on what state that the game is in
-        :return:
         """
         if self.game_running:
             self.board.render(self.screen)
