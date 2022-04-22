@@ -15,20 +15,3 @@ model = PPO("MlpPolicy", env, verbose=1)
 model.learn(total_timesteps=80000)
 model.save("ppo_go")
 
-del model
-
-model = PPO.load("ppo_go")
-
-obs = env.reset()
-
-
-done = False
-while not done:
-    action = env.render(mode="human")
-    state, reward, done, info = env.step(action)
-    if env.game_ended():
-        break
-    action, _states = model.predict(obs)
-    state, reward, done, info = env.step(action)
-
-env.render(mode="human")

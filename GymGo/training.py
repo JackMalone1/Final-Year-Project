@@ -151,7 +151,7 @@ def train_dqn(episode):
 if __name__ == '__main__':
     print(go_env.observation_space)
     print(go_env.action_space)
-    episodes = 250
+    episodes = 600
     loss = train_dqn(episodes)
     plt.plot([i + 1 for i in range(0, len(loss), 2)], loss[::2])
     plt.show()

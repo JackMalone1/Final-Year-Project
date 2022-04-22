@@ -112,6 +112,26 @@
             that was captured inside of the game so that I was able to comapte how well each of the AIs were doing.
           </p>
         </div>
+        <div class="services__container">
+          <h1>Reinforcement Learning</h1>
+          <p class="content">
+            I had previously decided on working on two extensions for the Monte Carlo Tree Search algorithm as well as zobrist
+            hashing for the Alpha Beta Tree Search. Towards the end of the project after I had finished writing both of the algorithms, I decided
+            to change what I was working on and to do something else so I did not end up doing any of these. I realised that most of these probably
+            would have been fairly small changes to the algorithms and probably would have not aided greatly in comparing the two algorithms. 
+            I also had a decent amount of time left and I decided to work on something more challenging for the rest of the time that I did have. 
+            Instead I decided to work on the proximal policy (PPO) algorithm as well as deep Q learning. This involved finding a suitable environment from 
+            online that I would be able to use to train them. Finding this as well as setting it up to work properly with the algorithms took a little bit 
+            longer than expected as there was a few things inside of the environment that I had to change to get it working the way that I wanted it. This 
+            took a few days to do. After I was able to fix the issues with the environment itself, it did not take me too long to properly research as well 
+            as implement the PPO algorithm.
+            After I got that implemented I focused on trying to get the Deep Q learning algorithm implemented. This took around a week and a half for me to be 
+            able to implement, after which I had a model that was able to train on the environment. However the model took a long time to train and it seems as 
+            if it was not able to make legal moves most of the time so the training of the model did not turn out too well but it might be able to be improved 
+            given more time to train and a better reward model for the game. I might also be able to improve how often the model remembers certain things with 
+            retraining and the learning rate as to get it to try out new moves instead of only doing the same moves.
+          </p>
+        </div>
     </div>
 
     <!-- Footer Section -->

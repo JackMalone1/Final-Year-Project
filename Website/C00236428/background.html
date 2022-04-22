@@ -95,6 +95,33 @@
                 moves.
           </p>
         </div>
+        <div class="services__container">
+          <h1>Q Learning</h1>
+          <p class="content">
+            Q learning is a model free reinforcement learning algorithm to learn the value of an action in a particular state.
+            Q learning can identify an optimal action selection policy for any give Markov decision process, given enough exploration time
+            and a partly random policy.
+            When Q-learning is performed we create what's called a q-table or matrix that follows the shape of [state, action] and we initialise
+            the values to zero. We then update and store the q-values after an episode. An episode is when you complete an environment once.
+            This table becomes a reference table for the agent to select the best action based on the q-value. The next step is then for the agent
+            to interact with the environment and make updates to the state action pairs in the q table Q[state, action]. The agent interacts with the
+            environment using exploration and exploitation to make sure that it is exploring the environment but also when it finds a good action it uses
+            it properly. Updating the q-table occurs after each action until a given episode is done. The final state for the game of go is when either both
+            players decide to pass or when there is no legal moves to play, I have decided to use the no legal moves as a cutoff as well as a hard cutoff after
+            a certain number of moves to simulate both players passing at the end of a game.
+          </p>
+        </div>
+        <div class="services__container">
+          <p class="content">
+            <h1>PPO</h1>
+            <p class="content">
+              PPO is a policy gradient method with either discrete or continuous action spaces. It trains a stochastic policy in an on-policy way.
+              The idea behind PPO is to avoid having too large of a policy update. To do that, a ratio is used that tells us the difference between
+              the new policy and the old policy and this ration is usually between 0.8 and 1.2. It also introduces a new way of training an agent by running
+              K epochs of gradient descent over a sampling mini batches.
+            </p>
+          </p>
+        </div>
     </div>
 
     <!-- Footer Section -->

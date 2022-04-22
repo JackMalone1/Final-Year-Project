@@ -80,6 +80,21 @@
           would lead to better play than the other two approaches mentioned as it can train on a large amount of professional games whereas the other algorithms are
           just playing based on a custom evaluation function. This could also help with the algorithms not understanding different problems found on the board
           such as when certain pieces are alive as well as protecting their own pieces and territory better.
+          One next step could be to further compare different types of machine learning against each other for trying to solve the game of go. 
+          One area that would probably be best to focus on would be supervised learning. A component ai could be created given a good data set 
+          to train the model on, however this could take a while to train the agent so some way of speeding this training up using multiple pcs 
+          or a different technique to use alongside the supervised learning would be needed. This would be similar to some of the ai that AlphaGo created as 
+          they were creating their neural network where they used a large number of professional games to try and create an ai that could play the game as well. 
+          Other games could also be chosen to see how these algorithms could be used in those games. Chess may be an easier game to create an AI for as the 
+          search space is a lot smaller, however it could take a bit longer to actually implement the game itself into an environment that you could use unless 
+          you use a pre-made one as the rules of Go are not as complex. For my implementation of the model, I did not use any external data apart from training 
+          it on playing the actual game, so giving the ai an opening book as well as puzzles as part of some kind of Supervised learning could improve the skill 
+          level of the ai that are generated as the skill level of the ai that I generated is not that high, especially for the larger boards as this is a much 
+          harder problem to solve, so someone could first try to make a good ai for the smaller boards and then work up to creating an ai that can play 
+          reasonably well compared to a human beginner at the game.
+          My game was created without being able to also be used to play against ai created by other players. There is a standardised format for playing moves
+          on a board as well as a way to format boards that could be used to also incorporate other ai into the game which could then be used to compare the ai 
+          against already created ai if needed. 
         </p>
       </div>  
   </div>
