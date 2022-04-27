@@ -76,7 +76,9 @@ class DQN:
         return np.argmax(act_values[0])
 
     def replay(self):
-
+        """replays using the data that has been stored in its memory so that the model does not forget things from previous moves. This stops things being forgotten
+        when it is trained for a long time.
+        """
         if len(self.memory) < self.batch_size:
             return
         print("Minibatch")
@@ -102,6 +104,15 @@ class DQN:
 
 
 def train_dqn(episode):
+    """Creates a dqn model and trains it for a certain number of episodes. If it reaches a predtermined max score before all episodes are finished it will 
+    then finish early instead. Creates a graph of the average score over the last 100 episodes at the end of the training. If the model plays an invalid move
+    then it will change this for a valid move instead and get the reward for this move. The model will be saved to a file regardless of how well it did.
+    Args:
+        episode (int): how many episodes you want the function to go through to train the model.
+
+    Returns:
+        list: list of the average scores so that is able to be plotted
+    """
     loss = []
     agent = DQN(go_env.action_space.n, go_env.observation_space.shape[0])
     for e in range(episode):
@@ -149,6 +160,8 @@ def train_dqn(episode):
 
 
 if __name__ == '__main__':
+    """runs the training for 100 episodes and then graphs the results
+    """
     print(go_env.observation_space)
     print(go_env.action_space)
     episodes = 100
