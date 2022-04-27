@@ -199,7 +199,7 @@ class Board:
     def get_piece_at_position(self, row: int, col: int) -> Piece:
         return self.piece_matrix[row][col]
 
-    def get_number_of_black_pieces(self):
+    def get_number_of_black_pieces(self) -> int:
         sum = 0
         for row in self.piece_matrix:
             for piece in row:
@@ -207,7 +207,7 @@ class Board:
                     sum += 1
         return sum
 
-    def get_number_of_white_pieces(self):
+    def get_number_of_white_pieces(self) -> int:
         sum = 0
         for row in self.piece_matrix:
             for piece in row:

@@ -1,3 +1,14 @@
+"""
+This script is used for basic database crud for the main database in the game.
+There are functions for adding game results as well as specific moves that were done in each game
+which will be automatically added to the database.
+Use sqlite3 as well as a database on disk for storage of the results.
+Also allows the user to remove moves and games based on players or full games respectively
+You can also get moves for a specific player, update moves and get games for a specific player where they
+were playing black or white
+"""
+
+
 import sqlite3
 
 conn = sqlite3.connect("go_data.db")

@@ -26,7 +26,6 @@ class MonteCarloTreeSearch:
         state
         :param colour: what colour the algorithm should make a move for
         """
-        self.calculation_time = 20
         self.board = board
         self.board.piece_matrix = deepcopy(board.piece_matrix)
         self.states = []

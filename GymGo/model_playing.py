@@ -45,7 +45,8 @@ def index_to_board_position(index):
     """
     looks up what move should be done based on the index that the model predicted
     """
-    return board_positions[index]
+    print(index - 1)
+    return board_positions[index - 1]
         
 if __name__ == '__main__':
     """

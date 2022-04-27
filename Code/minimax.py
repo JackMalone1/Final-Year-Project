@@ -166,7 +166,7 @@ class MiniMax:
         move.score = alpha
         return move
 
-    def is_time_limit_reached(self):
+    def is_time_limit_reached(self) -> bool:
         current_time = datetime.utcnow()
         difference = current_time - self.start_time
         return difference >= timedelta(seconds=self.calculation_time)

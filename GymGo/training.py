@@ -52,9 +52,9 @@ class DQN:
         """
         model = tf.keras.Sequential()
         model.add(layers.Dense(6, input_dim=self.state_space, activation='relu'))
-        model.add(layers.Dense(19, input_dim=self.state_space, activation='relu'))
-        model.add(layers.Dense(19, input_dim=self.state_space, activation='relu'))
-        model.add(layers.Dense(64, input_dim=self.state_space, activation='relu'))
+        #model.add(layers.Dense(19, input_dim=self.state_space, activation='relu'))
+        model.add(layers.Dense(19*19, input_dim=self.state_space, activation='relu'))
+        #model.add(layers.Dense(64, input_dim=self.state_space, activation='relu'))
         model.add(tf.keras.layers.Flatten())
         model.compile(loss='mse', optimizer='Adam')
         model.summary()
@@ -108,7 +108,7 @@ def train_dqn(episode):
         state = go_env.reset()
         state = np.reshape(state, (19,19,6))
         score = 0
-        max_steps = 500
+        max_steps = 350
 
         for i in range(max_steps):
             action = agent.act(state)
@@ -151,7 +151,7 @@ def train_dqn(episode):
 if __name__ == '__main__':
     print(go_env.observation_space)
     print(go_env.action_space)
-    episodes = 600
+    episodes = 100
     loss = train_dqn(episodes)
     plt.plot([i + 1 for i in range(0, len(loss), 2)], loss[::2])
     plt.show()
