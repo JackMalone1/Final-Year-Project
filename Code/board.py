@@ -12,12 +12,20 @@ from go_rules import GoRules
 
 
 class Text:
+    """
+    A string that has a position attached to make it easier to be displayed in the window.
+    """
     def __init__(self, text: str, position: tuple):
         self.string = text
         self.position = position
 
 
 class Board:
+    """
+    This class holds the visual representation of the board. This includes the background and naming of all of the different
+    positions of the board and pieces after they are placed. Also stores where all of the actual pieces are placed on the board.
+    Also includes ko so that pieces cannot be placed at that positions.
+    """
     def __init__(
         self,
         background: pygame.image,
@@ -25,6 +33,13 @@ class Board:
         font_path: string,
         piece_sound_effect_path,
     ):
+        """
+
+        :param background: Sprite representing the background
+        :param size: Size of the board that you want to be created
+        :param font_path: Font to be used for the naming of the different positions
+        :param piece_sound_effect_path: Sound effect for when you place a piece as a player
+        """
         self.has_ko = False
         self.size = size - 1
         self.font = freetype.Font(font_path, 24)
@@ -49,6 +64,10 @@ class Board:
         self.rules = GoRules(self.piece_matrix, self.size)
 
     def render(self, screen: pygame.display) -> None:
+        """
+        Renders all of the board data to the screen
+        :param screen: Pygame display that you want to display the board to
+        """
         screen.blit(self.background, self.background_rect)
         [
             [pygame.draw.rect(screen, pygame.Color(0, 0, 0), col, 3) for col in row]
@@ -78,6 +97,14 @@ class Board:
         ]
 
     def check_mouse_position(self, mouse_position, current_colour: PlayerTurn) -> bool:
+        """
+        Takes in the current mouse position and checks if it intersects any of the possible position and uses pygame
+        rectangles so that there is some extra space where they are able to place a piece. Also takes in the current colour
+        so that it is able to place that piece
+        :param mouse_position: position of the mouse as a tuple
+        :param current_colour: what colour piece should be placed if the piece is able to be placed
+        :return: whether or not a piece was placed
+        """
         for x in range(self.size + 1):
             for y in range(self.size + 1):
                 if self.board_intersections[x][y].collidepoint(mouse_position):
@@ -87,6 +114,13 @@ class Board:
         return False
 
     def place_ko(self, rules, colour, position):
+        """
+        After a piece is captured and ko has occured, this will place ko at the correct position so that for the next move
+        it is not possible to play at this position.
+        :param rules: rules class so that it is able to figure out where to place ko
+        :param colour: colour of piece to place that captured to create the ko state
+        :param position: position of the new piece to place
+        """
         row, col = (
             rules.killed_groups[0][0].row,
             rules.killed_groups[0][0].col,
@@ -98,6 +132,12 @@ class Board:
         self.piece_matrix[position[0]][position[1]].set_colour(colour)
 
     def remove_ko(self, colour, position):
+        """
+        Call after the move that ko was placed. This will remove the status of ko and let players to place at this position
+        again
+        :param colour: colour of piece that you want to place
+        :param position: position of the piece that you want to place
+        """
         self.piece_matrix[position[0]][position[1]].set_position(
             self.board_intersections[position[0]][position[1]].center
         )
@@ -111,6 +151,14 @@ class Board:
     def place_piece_at_position(
         self, current_colour: PlayerTurn, position: tuple
     ) -> bool:
+        """
+        takes in a position and colour for a piece to be placed. Then checks if the move is legal to play and if it is then
+        it will place the piece and remove any captured pieces from the board. Will also return whether or not the piece
+        was placed so that the current player can be switched.
+        :param current_colour: colour of the piece to be placed
+        :param position: position to place the piece at
+        :return: whether or not the piece was actually placed.
+        """
         has_placed_piece = False
         rules = GoRules(self.piece_matrix, self.size)
         if current_colour is PlayerTurn.BLACK and rules.is_move_legal(
@@ -142,6 +190,10 @@ class Board:
         return has_placed_piece
 
     def set_up_numbers(self) -> None:
+        """
+        Creates all of the text in the correct position to display at the side of the board so that all of the positions are
+        labelled correctly. Places the letters along the y axis and the numbers along the x axis.
+        """
         starting_position = (
             self.board_intersections[-1][-1].x,
             self.board_intersections[-1][-1].y,
@@ -166,6 +218,10 @@ class Board:
             number -= 1
 
     def set_up_grid(self) -> None:
+        """
+        Sets up all of the collisions for the board so that an actual player can place a piece on the board as these
+        collisions are used to check where the player clicks on the board.
+        """
         for y in range(self.size + 1):
             y_position = self.offset + (y * self.tile_size)
             for x in range(self.size + 1):
@@ -197,9 +253,19 @@ class Board:
         self.set_up_numbers()
 
     def get_piece_at_position(self, row: int, col: int) -> Piece:
+        """
+        Returns a piece at a given position
+        :param row: row of the piece
+        :param col: column of the piece
+        :return: the piece at that position
+        """
         return self.piece_matrix[row][col]
 
     def get_number_of_black_pieces(self) -> int:
+        """
+        Goes through the entire board and counts how many black pieces there are
+        :return: the number of black pieces that are on the board
+        """
         sum = 0
         for row in self.piece_matrix:
             for piece in row:
@@ -208,6 +274,10 @@ class Board:
         return sum
 
     def get_number_of_white_pieces(self) -> int:
+        """
+        Goes through the entire board and counts how many white pieces there are
+        :return: the number of white pieces that are on the board
+        """
         sum = 0
         for row in self.piece_matrix:
             for piece in row:

@@ -17,6 +17,10 @@ c = conn.cursor()
 
 
 def insert_move(move):
+    """
+    Adds the move passed in in to the database table.
+    :param move: Move that you want to be added in to the database
+    """
     with conn:
         c.execute(
             "INSERT INTO moves VALUES (:colour, :player, :calculatedMoves, :boardSize, :time_allowed, :move_number, :game_id)",
@@ -33,6 +37,13 @@ def insert_move(move):
 
 
 def get_moves_by_player(player):
+    """
+    Gets all moves by the player that was passed in. This player will be either a string representing the monte carlo tree
+    search or the alpha beta tree search. If there are moves that are related to an actual player then you can also get
+    these values
+    :param player: player that you want to get the moves for
+    :return: all moves that are related to this player
+    """
     c.execute(
         "SELECT * FROM moves WHERE player=:player",
         {"last": player},
@@ -41,6 +52,12 @@ def get_moves_by_player(player):
 
 
 def update_moves_calculated(move, moves_calculated):
+    """
+    takes in a move that you want to udpate along with the number of moves calculated that you want to overwrite the old value
+    with
+    :param move: move that you want to update
+    :param moves_calculated: new moves calculated value that you want
+    """
     with conn:
         c.execute(
             """UPDATE moves SET calculatedMoves = :calculatedMoves
@@ -54,6 +71,10 @@ def update_moves_calculated(move, moves_calculated):
 
 
 def remove_move(move):
+    """
+    Removes any moves from the database that matches the move that was passed in
+    :param move: Move that you want to be removed from the database
+    """
     with conn:
         c.execute(
             "DELETE from moves WHERE player=:player AND colour =: colour",
@@ -62,6 +83,10 @@ def remove_move(move):
 
 
 def insert_game(game):
+    """
+    Inserts the game passed in to the database
+    :param game: game that you want to be added to the database
+    """
     with conn:
         c.execute(
             "INSERT INTO games VALUES (:player1, :player2, :player1Territory,"
@@ -81,6 +106,11 @@ def insert_game(game):
 
 
 def get_games_by_player_for_black(player):
+    """
+    Gets all games made by the player passed in for games where they were playing as black
+    :param player: string representing the player that you want to get the moves for
+    :return: list of all moves that match the player for black
+    """
     c.execute(
         "SELECT * FROM games WHERE player1=:player",
         {"player": player},
@@ -89,6 +119,11 @@ def get_games_by_player_for_black(player):
 
 
 def get_games_by_player_for_white(player):
+    """
+    Gets all games made by the player passed in for games where they were playing as white
+    :param player: string representing the player that you want to get the moves for
+    :return: list of all moves that match the player for white
+    """
     c.execute(
         "SELECT * FROM games WHERE player2=:player",
         {"player": player},
@@ -97,6 +132,11 @@ def get_games_by_player_for_white(player):
 
 
 def remove_game(game):
+    """
+    Removes all games that match the move that was passed in to the function. The ids do not necessarily need to match for the
+    game to be deleted
+    :param game: Game that you want to delete from the database
+    """
     with conn:
         c.execute(
             "DELETE from games WHERE player1=:player1 AND player2=:player2"
